@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Task Manager - Subjects</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-light-pastel" data-page="subjects">
+
+
+  <!-- Sidebar -->
+  <nav class="sidebar bg-purple p-3">
+    <h4 class="text-white fw-bold mb-4">Task Manager</h4>
+    <ul class="nav flex-column">
+      <li class="nav-item mb-2"><a href="dashboard.html" class="nav-link"><i class="bi bi-display me-2"></i> Dashboard</a></li>
+      <li class="nav-item mb-2"><a href="tasks.html" class="nav-link"><i class="bi bi-list-check me-2"></i> Tasks</a></li>
+      <li class="nav-item mb-2"><a href="subjects.html" class="nav-link active"><i class="bi bi-bookmarks me-2"></i> Subjects</a></li>
+      <li class="nav-item mb-2"><a href="profile.html" class="nav-link"><i class="bi bi-person-badge me-2"></i> Profile</a></li>
+      <li class="nav-item mb-2"><a href="index.html" class="nav-link"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content + Right Column -->
+  <div class="flex-grow-1 ms-3">
+    
+   <!-- TOP NAVBAR -->
+<nav class="top-navbar d-flex align-items-center justify-content-between px-4 py-2" style="background-color: #f692f1;">
+    <h4 class="m-0 fw-bold">Task Manager</h4>
+
+    <div class="d-flex align-items-center gap-3">
+        <!-- Search -->
+        <input type="text" class="form-control search-bar" placeholder="Search tasks..." style="max-width: 200px;">
+
+        <!-- Profile (clickable) -->
+        <a href="profile.html">
+            <img src="pic/profileid.png" class="profile-icon rounded-circle" width="35" alt="Profile">
+        </a>
+
+        <!-- Logout -->
+        <a href="index.html" class="btn btn-outline-dark btn-sm">Logout</a>
+    </div>
+</nav>
+
+    <div class="container-fluid mt-4">
+      <div class="row">
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb" id="breadcrumb">
+    <!-- JS akan populate breadcrumb di sini -->
+  </ol>
+</nav>
+
+  <!-- Subjects Content -->
+  <div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="text-dark">My Subjects</h2>
+      <button class="btn btn-primary btn-pastel" data-bs-toggle="modal" data-bs-target="#addSubjectModal">Add Subject</button>
+    </div>
+
+    <!-- Subjects Table -->
+    <div class="card p-3 shadow-sm">
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Subject Name</th>
+              <th>Code</th>
+              <th>Instructor</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="subjectTable">
+            <tr>
+              <td>Web Design</td>
+              <td>WD101</td>
+              <td>Dr. Aisyah</td>
+              <td>
+                <button class="btn btn-sm btn-secondary">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>IT Fundamentals</td>
+              <td>LCC501</td>
+              <td>Mr. Hafiz</td>
+              <td>
+                <button class="btn btn-sm btn-secondary">Edit</button>
+                <button class="btn btn-sm btn-danger">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Subject Modal -->
+  <div class="modal fade" id="addSubjectModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header" style="background-color: #CBAACB;">
+          <h5 class="modal-title">Add New Subject</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="addSubjectForm">
+            <div class="mb-3">
+              <label for="subjectName" class="form-label">Subject Name</label>
+              <input type="text" class="form-control" id="subjectName" required>
+            </div>
+            <div class="mb-3">
+              <label for="subjectCode" class="form-label">Subject Code</label>
+              <input type="text" class="form-control" id="subjectCode" required>
+            </div>
+            <div class="mb-3">
+              <label for="instructor" class="form-label">Instructor</label>
+              <input type="text" class="form-control" id="instructor" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary btn-pastel">Add Subject</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Custom JS -->
+  <script src="app.js"></script>
+</body>
+</html>

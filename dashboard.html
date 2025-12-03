@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Task Manager - Dashboard</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+
+
+  <!-- Sidebar -->
+  <nav class="sidebar bg-purple p-3">
+    <h4 class="text-white fw-bold mb-4">Task Manager</h4>
+    <ul class="nav flex-column">
+      <li class="nav-item mb-2"><a href="dashboard.html" class="nav-link active"><i class="bi bi-display me-2"></i> Dashboard</a></li>
+      <li class="nav-item mb-2"><a href="tasks.html" class="nav-link"><i class="bi bi-list-check me-2"></i> Tasks</a></li>
+      <li class="nav-item mb-2"><a href="subjects.html" class="nav-link"><i class="bi bi-bookmarks me-2"></i> Subjects</a></li>
+      <li class="nav-item mb-2"><a href="profile.html" class="nav-link"><i class="bi bi-person-badge me-2"></i> Profile</a></li>
+      <li class="nav-item mb-2"><a href="index.html" class="nav-link"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main Content + Right Column -->
+  <div class="flex-grow-1 ms-3">
+    
+    <!-- TOP NAVBAR -->
+<nav class="top-navbar d-flex align-items-center justify-content-between px-4 py-2" style="background-color: #f692f1;">
+    <h4 class="m-0 fw-bold">Task Manager</h4>
+
+    <div class="d-flex align-items-center gap-3">
+        <!-- Search -->
+        <input type="text" class="form-control search-bar" placeholder="Search tasks..." style="max-width: 200px;">
+
+        <!-- Profile (clickable) -->
+        <a href="profile.html">
+            <img src="pic/profileid.png" class="profile-icon rounded-circle" width="35" alt="Profile">
+        </a>
+
+        <!-- Logout -->
+        <a href="index.html" class="btn btn-outline-dark btn-sm">Logout</a>
+    </div>
+</nav>
+<!-- Content -->
+<div class="content-wrapper">
+  <nav aria-label="breadcrumb">
+    <ol class="breadcrumb" id="breadcrumb">
+      <li class="breadcrumb-item active">Dashboard</li>
+    </ol>
+  </nav>
+  <div class="container-fluid mt-4">
+    <div class="row">
+
+        <!-- Main Left Column -->
+        <div class="col-lg-8">
+
+          <!-- Main Topic -->
+          <div class="main-section mb-4 p-3 rounded shadow-sm">
+            <div class="row align-items-center">
+              <div class="col-md-4 text-center">
+                <img src="tasks.jpeg" class="main-img rounded" alt="Main Topic">
+              </div>
+              <div class="col-md-8">
+                <h3 class="fw-bold">Main Topic Title</h3>
+                <p>This is the description area. Image on left, text on right. Add more details here.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Summary Cards -->
+          <div class="row g-3 mb-4">
+            <div class="col-md-4">
+              <div class="dash-card">
+                <h5>Total Tasks</h5>
+                <h2>24</h2>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="dash-card purple">
+                <h5>Completed</h5>
+                <h2>15</h2>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="dash-card orange">
+                <h5>Pending</h5>
+                <h2>9</h2>
+              </div>
+            </div>
+          </div>
+
+          <!-- Charts -->
+          <div class="row g-3">
+            <div class="col-md-6">
+              <div class="chart-box p-3 rounded shadow-sm">
+                <h5 class="fw-bold mb-3">Task Completion Chart</h5>
+                <canvas id="taskChart"></canvas>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="chart-box p-3 rounded shadow-sm">
+                <h5 class="fw-bold mb-3">Weekly Study Hours</h5>
+                <canvas id="studyChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Small Column -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+          <div class="side-info-box p-3 rounded shadow-sm">
+            <h6 class="fw-bold text-center mb-3">Achievements</h6>
+            <div class="info-box mb-2">
+              <i class="bi bi-trophy-fill"></i>
+              <p>Completed 15 Tasks</p>
+            </div>
+            <div class="info-box mb-3">
+              <i class="bi bi-lightning-charge-fill"></i>
+              <p>Weekly Streak: 5 Days</p>
+            </div>
+            <h6 class="fw-bold text-center mt-4 mb-3">Library Access</h6>
+            <div class="info-box mb-2">
+              <i class="bi bi-book-half"></i>
+              <p><a href="https://library.uitm.edu.my/" target="_blank" rel="noopener noreferrer">UiTM Library Portal</a></p>
+            </div>
+            <div class="info-box mb-2">
+              <i class="bi bi-journal-text"></i>
+             <p><a href="https://ptar.uitm.edu.my/pddt/subjects/databases.php?letter=bytype&type=E%2dJournal" target="_blank" rel="noopener noreferrer">E-Journal Access</a></p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
