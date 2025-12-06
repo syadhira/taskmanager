@@ -354,8 +354,9 @@ document.addEventListener("DOMContentLoaded", () => {
     // ============================
 
     if (document.body.dataset.page === 'subjects') {
-        // Subject data array (updated list)
-        let subjects = [
+        // Subject data array (load from localStorage if available)
+        let subjects;
+        const _defaultSubjects = [
                 {
                     name: 'Information System Project Manager',
                     code: 'ISP401',
@@ -502,8 +503,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             ];
 
-            // persist initial subjects to localStorage so other pages can read them
+        // Try to load persisted subjects first (so edits/deletes survive reload)
+        try {
+            const stored = JSON.parse(localStorage.getItem('subjectsData'));
+            if (Array.isArray(stored) && stored.length > 0) {
+                subjects = stored;
+            } else {
+                subjects = _defaultSubjects;
+                localStorage.setItem('subjectsData', JSON.stringify(subjects));
+            }
+        } catch (err) {
+            subjects = _defaultSubjects;
             localStorage.setItem('subjectsData', JSON.stringify(subjects));
+        }
 
       // Update subject stats
       function updateSubjectStats() {
