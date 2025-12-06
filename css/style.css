@@ -322,6 +322,38 @@ h2 {
   justify-content: center;
 }
 
+/* Notification dropdown: allow items to wrap, but limit overall dropdown height and enable scroll */
+.notification-btn + .dropdown-menu {
+  max-height: 440px;
+  overflow-y: auto;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+/* Let each notification item grow vertically and wrap text */
+.notification-btn + .dropdown-menu .dropdown-item {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  white-space: normal;
+}
+
+.notification-btn + .dropdown-menu .dropdown-item .flex-grow-1 {
+  display: block;
+  width: 100%;
+}
+
+.notification-btn + .dropdown-menu .dropdown-item .flex-grow-1 .small,
+.notification-btn + .dropdown-menu .dropdown-item .flex-grow-1 .text-muted,
+.notification-btn + .dropdown-menu .dropdown-item .flex-grow-1 .xsmall {
+  display: block;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+.notification-btn + .dropdown-menu .dropdown-header .btn {
+  font-size: 0.9rem;
+}
+
 /* Main Content */
 .main-content {
   flex: 1;

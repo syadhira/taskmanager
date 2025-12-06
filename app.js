@@ -178,6 +178,156 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ============================
+    // NOTIFICATIONS (localStorage-backed)
+    // ============================
+    function loadNotifications() {
+        try {
+            return JSON.parse(localStorage.getItem('notificationsData')) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveNotifications(list) {
+        localStorage.setItem('notificationsData', JSON.stringify(list));
+    }
+
+    function addNotification(type, title, message) {
+        const list = loadNotifications();
+        const item = {
+            id: Date.now(),
+            type: type || 'general',
+            title: title || 'Notification',
+            message: message || '',
+            time: new Date().toISOString(),
+            read: false
+        };
+        list.unshift(item);
+        // Keep only the most recent 50 notifications
+        if (list.length > 50) list.splice(50);
+        saveNotifications(list);
+        updateNotificationUI();
+    }
+
+    function markAllNotificationsRead() {
+        // Soft-archive: move all active notifications into archived storage
+        archiveAllNotifications();
+    }
+
+    // Archived notifications helpers (soft-delete storage)
+    function loadArchivedNotifications() {
+        try {
+            return JSON.parse(localStorage.getItem('archivedNotificationsData')) || [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    function saveArchivedNotifications(list) {
+        localStorage.setItem('archivedNotificationsData', JSON.stringify(list));
+    }
+
+    function archiveNotificationById(id) {
+        let active = loadNotifications();
+        const idx = active.findIndex(n => n.id === id);
+        if (idx === -1) return;
+        const [item] = active.splice(idx, 1);
+        const archived = loadArchivedNotifications();
+        archived.unshift({...item, archivedAt: new Date().toISOString()});
+        // limit archived size to 200
+        if (archived.length > 200) archived.splice(200);
+        saveArchivedNotifications(archived);
+        saveNotifications(active);
+        updateNotificationUI();
+    }
+
+    function archiveAllNotifications() {
+        const active = loadNotifications();
+        if (!active || active.length === 0) {
+            // nothing to do
+            saveNotifications([]);
+            updateNotificationUI();
+            return;
+        }
+        const archived = loadArchivedNotifications();
+        const combined = active.map(n => ({...n, archivedAt: new Date().toISOString()})).concat(archived);
+        // keep most recent first and cap size
+        const limited = combined.slice(0, 200);
+        saveArchivedNotifications(limited);
+        saveNotifications([]);
+        updateNotificationUI();
+    }
+
+    function updateNotificationUI() {
+        const btn = document.querySelector('.notification-btn');
+        if (!btn) return;
+        const menu = btn.nextElementSibling; // expected dropdown
+        if (!menu) return;
+        const list = loadNotifications();
+        const unreadCount = list.filter(n => !n.read).length;
+        const badge = document.querySelector('.notification-badge');
+        if (badge) {
+            badge.textContent = unreadCount > 0 ? unreadCount : '';
+            badge.style.display = unreadCount > 0 ? 'inline-block' : 'none';
+        }
+
+        // Build dropdown contents (limit to 6 recent)
+        let html = `
+            <li class="dropdown-header d-flex justify-content-between align-items-center">
+              <span class="fw-bold">Notifications</span>
+              <button class="btn btn-sm btn-link text-primary p-0" id="markAllReadBtn">Mark all read</button>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+        `;
+
+        if (list.length === 0) {
+            html += `<li class="dropdown-item text-center text-muted">No notifications</li>`;
+        } else {
+            list.slice(0,6).forEach(n => {
+                const timeAgo = new Date(n.time).toLocaleString();
+                const unreadClass = n.read ? '' : 'fw-bold';
+                html += `
+                  <li>
+                    <a class="dropdown-item py-2" href="#" data-id="${n.id}">
+                      <div class="d-flex">
+                        <div class="flex-grow-1">
+                          <div class="small ${unreadClass}">${n.title}</div>
+                          <div class="text-muted small">${n.message}</div>
+                          <div class="text-muted xsmall">${timeAgo}</div>
+                        </div>
+                      </div>
+                    </a>
+                  </li>
+                `;
+            });
+            html += `<li><hr class="dropdown-divider"></li>`;
+            html += `<li><a class="dropdown-item text-center text-primary" href="#" id="viewAllNotifications">View all notifications</a></li>`;
+        }
+
+        menu.innerHTML = html;
+
+        // Attach handlers
+        const markBtn = document.getElementById('markAllReadBtn');
+        if (markBtn) markBtn.addEventListener('click', function(e){ e.preventDefault(); markAllNotificationsRead(); });
+        const viewAll = document.getElementById('viewAllNotifications');
+        if (viewAll) viewAll.addEventListener('click', function(e){ e.preventDefault(); window.location.hash = '#notifications'; });
+
+        // Remove individual notification when clicked (mark as read -> disappear)
+        const itemLinks = menu.querySelectorAll('a[data-id]');
+        itemLinks.forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                const id = Number(this.getAttribute('data-id'));
+                // Soft-archive this notification so it disappears from active list
+                archiveNotificationById(id);
+            });
+        });
+    }
+
+    // Initialize notifications UI on load
+    updateNotificationUI();
+
+    // ============================
     // LOGIN BUTTON
     // ============================
     const loginBtn = document.getElementById('loginBtn');
@@ -258,6 +408,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const taskPriority = document.getElementById('taskPriority').value;
             const taskStatus = document.getElementById('taskStatus').value;
             const taskDue = document.getElementById('taskDue').value;
+            const taskReminderChecked = document.getElementById('taskReminder') ? document.getElementById('taskReminder').checked : false;
             // Save to localStorage
             let tasks = JSON.parse(localStorage.getItem('tasksData')) || [];
             tasks.push({
@@ -266,7 +417,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 subject: taskSubject,
                 priority: taskPriority,
                 status: taskStatus,
-                due: taskDue
+                due: taskDue,
+                reminder: taskReminderChecked
             });
             localStorage.setItem('tasksData', JSON.stringify(tasks));
             // ...existing code for adding to table...
@@ -351,6 +503,8 @@ document.addEventListener("DOMContentLoaded", () => {
             addTaskForm.reset();
             bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
             // Show success message (optional)
+            if (typeof addNotification === 'function') addNotification('task', 'New task added', taskName);
+            if (taskReminderChecked && typeof addNotification === 'function') addNotification('reminder', 'Reminder set', `Reminder set for ${taskName} on ${taskDue}`);
             console.log('Task added successfully!');
         });
     }
@@ -647,6 +801,8 @@ document.addEventListener("DOMContentLoaded", () => {
           };
           subjects.push(subj);
           renderSubjectCards();
+                    // Notification: subject added
+                    if (typeof addNotification === 'function') addNotification('subject', 'Subject added', subj.name);
           addSubjectForm.reset();
           bootstrap.Modal.getInstance(document.getElementById('addSubjectModal')).hide();
         });
@@ -658,11 +814,13 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!btn) return;
         const idx = btn.getAttribute('data-idx');
         const action = btn.getAttribute('data-action');
-        if (action === 'delete') {
-          if (confirm('Delete this subject?')) {
-            subjects.splice(idx, 1);
-            renderSubjectCards();
-          }
+                if (action === 'delete') {
+                    if (confirm('Delete this subject?')) {
+                        const deletedName = subjects[idx] ? subjects[idx].name : 'Subject';
+                        subjects.splice(idx, 1);
+                        renderSubjectCards();
+                        if (typeof addNotification === 'function') addNotification('subject', 'Subject deleted', deletedName);
+                    }
         } else if (action === 'edit') {
           const subj = subjects[idx];
           document.getElementById('editSubjectIndex').value = idx;
@@ -723,7 +881,9 @@ document.addEventListener("DOMContentLoaded", () => {
             icon: document.getElementById('editSubjectIcon').value
           };
           renderSubjectCards();
-          bootstrap.Modal.getInstance(document.getElementById('editSubjectModal')).hide();
+                    // Notification: subject edited
+                    if (typeof addNotification === 'function') addNotification('subject', 'Subject updated', subjects[idx].name);
+                    bootstrap.Modal.getInstance(document.getElementById('editSubjectModal')).hide();
         });
       }
     }
@@ -1346,6 +1506,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let schedules = JSON.parse(localStorage.getItem('studySchedules')) || [];
             schedules.push(scheduleData);
             localStorage.setItem('studySchedules', JSON.stringify(schedules));
+            // Notification: study scheduled
+            if (typeof addNotification === 'function') addNotification('schedule', 'Study session scheduled', `${subject} on ${date} at ${time}`);
             
             // Show success message
             alert(`Study session scheduled successfully!\nSubject: ${subject}\nDate: ${date}\nTime: ${time}`);
@@ -1515,6 +1677,7 @@ function addInteractiveFeatures() {
             localStorage.setItem('tasksData', JSON.stringify(tasks));
             updateStatistics();
             console.log('Task deleted successfully!');
+            if (typeof addNotification === 'function') addNotification('task', 'Task deleted', taskName);
         }
     }
     
@@ -1557,6 +1720,7 @@ function addInteractiveFeatures() {
             
             updateStatistics();
             console.log('Task marked as completed!');
+            if (typeof addNotification === 'function') addNotification('task', 'Task completed', taskName);
         }
     }
     
@@ -1582,6 +1746,10 @@ function addInteractiveFeatures() {
             const row = document.querySelectorAll('#taskTable tr')[taskIndex];
             
             if (!row) return;
+            // Capture old due display and old task data for change detection
+            const oldDueDisplay = row.querySelector('td:nth-child(5) strong').textContent;
+            let tasks = JSON.parse(localStorage.getItem('tasksData')) || [];
+            const oldTask = tasks[taskIndex] ? {...tasks[taskIndex]} : null;
             
             // Get form values
             const taskName = document.getElementById('editTaskName').value;
@@ -1676,8 +1844,9 @@ function addInteractiveFeatures() {
             `;
 
             // Update localStorage with edited task
-            let tasks = JSON.parse(localStorage.getItem('tasksData')) || [];
-            // Find the original task by index
+            tasks = tasks || JSON.parse(localStorage.getItem('tasksData')) || [];
+            // Find the original task by index and update
+            const newDueDisplay = dueDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'});
             if (typeof taskIndex !== 'undefined' && tasks[taskIndex]) {
                 tasks[taskIndex] = {
                     name: taskName,
@@ -1685,9 +1854,15 @@ function addInteractiveFeatures() {
                     subject: taskSubject,
                     priority: taskPriority,
                     status: row.getAttribute('data-status'),
-                    due: dueDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})
+                    due: newDueDisplay,
+                    reminder: (tasks[taskIndex] && tasks[taskIndex].reminder) ? tasks[taskIndex].reminder : false
                 };
                 localStorage.setItem('tasksData', JSON.stringify(tasks));
+            }
+
+            // Notify if due date changed
+            if (oldDueDisplay && newDueDisplay && oldDueDisplay !== newDueDisplay) {
+                if (typeof addNotification === 'function') addNotification('task', 'Due date changed', `${taskName}: ${oldDueDisplay} → ${newDueDisplay}`);
             }
 
             // Hide modal and update statistics
