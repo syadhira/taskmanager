@@ -122,6 +122,10 @@ document.addEventListener("DOMContentLoaded", () => {
         // populate subject dropdowns from stored subjects
         populateSubjectSelects();
     }
+    // If on dashboard, ensure quick-start study subject select is populated
+    if (document.body.dataset.page === 'dashboard') {
+        if (typeof populateSubjectSelects === 'function') populateSubjectSelects();
+    }
     // Always update stats cards on load
     if (typeof updateStatistics === 'function') {
         updateStatistics();
@@ -153,6 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const subjectsRaw = JSON.parse(localStorage.getItem('subjectsData')) || [];
         const taskSelect = document.getElementById('taskSubject');
         const editSelect = document.getElementById('editTaskSubject');
+        const studySelect = document.getElementById('studySubject');
 
         function fill(select) {
             if (!select) return;
@@ -169,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         fill(taskSelect);
         fill(editSelect);
+        fill(studySelect);
     }
 
     // ============================
