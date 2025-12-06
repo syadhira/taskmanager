@@ -119,6 +119,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStatistics();
         initializeFilters();
         initializeSorting();
+        // populate subject dropdowns from stored subjects
+        populateSubjectSelects();
     }
     // Always update stats cards on load
     if (typeof updateStatistics === 'function') {
@@ -145,6 +147,29 @@ document.addEventListener("DOMContentLoaded", () => {
             link.classList.add('active');
         }
     });
+
+    // Populate subject selects on tasks page from localStorage
+    function populateSubjectSelects() {
+        const subjectsRaw = JSON.parse(localStorage.getItem('subjectsData')) || [];
+        const taskSelect = document.getElementById('taskSubject');
+        const editSelect = document.getElementById('editTaskSubject');
+
+        function fill(select) {
+            if (!select) return;
+            // keep a default placeholder
+            const placeholder = select.id === 'editTaskSubject' ? '<option value="">Select subject...</option>' : '<option value="">Choose subject...</option>';
+            select.innerHTML = placeholder;
+            subjectsRaw.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.name;
+                opt.textContent = s.name;
+                select.appendChild(opt);
+            });
+        }
+
+        fill(taskSelect);
+        fill(editSelect);
+    }
 
     // ============================
     // LOGIN BUTTON
@@ -329,63 +354,156 @@ document.addEventListener("DOMContentLoaded", () => {
     // ============================
 
     if (document.body.dataset.page === 'subjects') {
-      // Subject data array
-      let subjects = [
-        {
-          name: 'Web Design',
-          code: 'WD101',
-          description: 'Frontend Development & UI/UX',
-          instructor: 'Dr. Aisyah',
-          instructorEmail: 'aisyah@uitm.edu.my',
-          credits: 3,
-          semester: '1',
-          year: '2024/2025',
-          days: 'Mon, Wed',
-          time: '2:00 PM - 4:00 PM',
-          room: 'A101',
-          color: 'primary',
-          icon: 'bi-palette',
-          grade: 'A-',
-          tasks: 12,
-          progress: 85
-        },
-        {
-          name: 'IT Fundamentals',
-          code: 'LCC501',
-          description: 'Computer Systems & Networks',
-          instructor: 'Mr. Hafiz',
-          instructorEmail: 'hafiz@uitm.edu.my',
-          credits: 4,
-          semester: '2',
-          year: '2024/2025',
-          days: 'Tue, Thu',
-          time: '10:00 AM - 12:00 PM',
-          room: 'B202',
-          color: 'info',
-          icon: 'bi-cpu',
-          grade: 'B+',
-          tasks: 8,
-          progress: 60
-        },
-        {
-          name: 'Research Methods',
-          code: 'RM301',
-          description: 'Research & Academic Writing',
-          instructor: 'Prof. Sarah',
-          instructorEmail: 'sarah@uitm.edu.my',
-          credits: 3,
-          semester: '1',
-          year: '2024/2025',
-          days: 'Fri',
-          time: '8:00 AM - 10:00 AM',
-          room: 'C303',
-          color: 'success',
-          icon: 'bi-search',
-          grade: 'A',
-          tasks: 6,
-          progress: 100
-        }
-      ];
+        // Subject data array (updated list)
+        let subjects = [
+                {
+                    name: 'Information System Project Manager',
+                    code: 'ISP401',
+                    description: 'Capstone: manage information system projects and teams',
+                    instructor: 'Dr. Lim',
+                    instructorEmail: 'lim@uitm.edu.my',
+                    credits: 3,
+                    semester: '2',
+                    year: '2024/2025',
+                    days: 'Mon',
+                    time: '09:00 AM - 11:00 AM',
+                    room: 'D101',
+                    color: 'primary',
+                    icon: 'bi-diagram-3',
+                    grade: '-',
+                    tasks: 0,
+                    progress: 0
+                },
+                {
+                    name: 'Advanced Web Design Development and Content Management',
+                    code: 'AWD301',
+                    description: 'Advanced web design techniques and CMS integration',
+                    instructor: 'Ms. Noor',
+                    instructorEmail: 'noor@uitm.edu.my',
+                    credits: 3,
+                    semester: '1',
+                    year: '2024/2025',
+                    days: 'Tue, Thu',
+                    time: '10:00 AM - 12:00 PM',
+                    room: 'E202',
+                    color: 'info',
+                    icon: 'bi-palette',
+                    grade: '-',
+                    tasks: 0,
+                    progress: 0
+                },
+                {
+                    name: 'English for Professional Coresspondence',
+                    code: 'ENG201',
+                    description: 'Business and professional English communication',
+                    instructor: 'Dr. Tan',
+                    instructorEmail: 'tan@uitm.edu.my',
+                    credits: 2,
+                    semester: '1',
+                    year: '2024/2025',
+                    days: 'Wed',
+                    time: '02:00 PM - 04:00 PM',
+                    room: 'F303',
+                    color: 'secondary',
+                    icon: 'bi-envelope',
+                    grade: '-',
+                    tasks: 0,
+                    progress: 0
+                },
+                {
+                    name: 'Introductory German (LEVEL II)',
+                    code: 'GER102',
+                    description: 'Continued beginner German language studies (Level II)',
+                    instructor: 'Herr Müller',
+                    instructorEmail: 'mueller@uitm.edu.my',
+                    credits: 2,
+                    semester: '2',
+                    year: '2024/2025',
+                    days: 'Fri',
+                    time: '08:00 AM - 10:00 AM',
+                    room: 'G101',
+                    color: 'success',
+                    icon: 'bi-translate',
+                    grade: '-',
+                    tasks: 0,
+                    progress: 0
+                },
+                {
+                    name: 'Values and Civilization II',
+                    code: 'VC102',
+                    description: 'Civic values and cultural studies (Part II)',
+                    instructor: 'Prof. Rahman',
+                    instructorEmail: 'rahman@uitm.edu.my',
+                    credits: 2,
+                    semester: '1',
+                    year: '2024/2025',
+                    days: 'Mon, Wed',
+                    time: '11:00 AM - 12:30 PM',
+                    room: 'H202',
+                    color: 'warning',
+                    icon: 'bi-book',
+                    grade: '-',
+                    tasks: 0,
+                    progress: 0
+                },
+                {
+                    name: 'User Experience Design',
+                    code: 'UXD210',
+                    description: 'Principles of UX, user research and prototyping',
+                    instructor: 'Ms. Sofia',
+                    instructorEmail: 'sofia@uitm.edu.my',
+                    credits: 3,
+                    semester: '1',
+                    year: '2024/2025',
+                    days: 'Tue',
+                    time: '01:00 PM - 03:00 PM',
+                    room: 'I303',
+                    color: 'primary',
+                    icon: 'bi-lightbulb',
+                    grade: '-',
+                    tasks: 0,
+                    progress: 0
+                },
+                {
+                    name: 'Advanced Database Management System',
+                    code: 'DBM401',
+                    description: 'Advanced topics in database design and optimization',
+                    instructor: 'Dr. Aziz',
+                    instructorEmail: 'aziz@uitm.edu.my',
+                    credits: 4,
+                    semester: '2',
+                    year: '2024/2025',
+                    days: 'Thu',
+                    time: '09:00 AM - 11:00 AM',
+                    room: 'J404',
+                    color: 'success',
+                    icon: 'bi-database',
+                    grade: '-',
+                    tasks: 0,
+                    progress: 0
+                },
+                {
+                    name: 'Gamification for Content Management',
+                    code: 'GCM305',
+                    description: 'Applying gamification techniques to CMS and content strategy',
+                    instructor: 'Mr. Rahim',
+                    instructorEmail: 'rahim@uitm.edu.my',
+                    credits: 3,
+                    semester: '1',
+                    year: '2024/2025',
+                    days: 'Wed',
+                    time: '03:00 PM - 05:00 PM',
+                    room: 'K205',
+                    color: 'danger',
+                    icon: 'bi-trophy',
+                    grade: '-',
+                    tasks: 0,
+                    progress: 0
+                }
+            ];
+
+            // persist initial subjects to localStorage so other pages can read them
+            localStorage.setItem('subjectsData', JSON.stringify(subjects));
 
       // Update subject stats
       function updateSubjectStats() {
@@ -477,7 +595,11 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
           `;
         });
-        updateSubjectStats();
+                updateSubjectStats();
+                // persist current subjects list so other pages can sync
+                localStorage.setItem('subjectsData', JSON.stringify(subjects));
+                // ensure tasks page selects (if open) are updated
+                if (typeof populateSubjectSelects === 'function') populateSubjectSelects();
       }
 
       renderSubjectCards();
