@@ -1,5 +1,150 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Sidebar overlay toggle for mobile/tablet
+    const sidebarWrapper = document.getElementById('sidebarOffcanvas');
+    const sidebarBackdrop = document.createElement('div');
+    sidebarBackdrop.className = 'sidebar-backdrop';
+    document.body.appendChild(sidebarBackdrop);
+    function showSidebar() {
+        sidebarWrapper.classList.add('show');
+        sidebarBackdrop.classList.add('show');
+        document.body.style.overflow = 'hidden';
+    }
+    function hideSidebar() {
+        sidebarWrapper.classList.remove('show');
+        sidebarBackdrop.classList.remove('show');
+        document.body.style.overflow = '';
+    }
+    // Toggle button
+    document.querySelectorAll('.mobile-sidebar-toggle').forEach(btn => {
+        btn.addEventListener('click', e => {
+            e.preventDefault();
+            showSidebar();
+        });
+    });
+    // Hide on backdrop click or close button
+    sidebarBackdrop.addEventListener('click', hideSidebar);
+    document.querySelectorAll('.btn-close, [data-bs-dismiss="offcanvas"]').forEach(btn => {
+        btn.addEventListener('click', hideSidebar);
+    });
+    // Hide on nav link click (optional, for better UX)
+    document.querySelectorAll('.sidebar .nav-link').forEach(link => {
+        link.addEventListener('click', hideSidebar);
+    });
+    // Render tasks from localStorage on page load (if on tasks page)
+    function renderTasksFromStorage() {
+        const taskTable = document.getElementById('taskTable');
+        if (!taskTable) return;
+        const tasks = JSON.parse(localStorage.getItem('tasksData')) || [];
+        taskTable.innerHTML = '';
+        tasks.forEach(task => {
+            // Build row HTML
+            const row = document.createElement('tr');
+            row.className = 'task-row';
+            row.setAttribute('data-status', task.status);
+            // Priority badge
+            const priorityClass = task.priority === 'high' ? 'priority-high' : task.priority === 'medium' ? 'priority-medium' : 'priority-low';
+            const priorityIcon = task.priority === 'high' ? 'bi-arrow-up' : task.priority === 'medium' ? 'bi-dash' : 'bi-arrow-down';
+            // Status badge
+            const statusClass = task.status === 'completed' ? 'bg-success' : task.status === 'in-progress' ? 'bg-info' : task.status === 'overdue' ? 'bg-danger' : 'bg-warning text-dark';
+            const statusText = task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('-', ' ');
+            // Task icon
+            const taskIcon = task.status === 'completed' ? 'bi-check-circle' : task.status === 'in-progress' ? 'bi-arrow-clockwise' : task.status === 'overdue' ? 'bi-exclamation-triangle' : 'bi-clock';
+            const taskIconBg = task.status === 'completed' ? 'bg-success' : task.status === 'in-progress' ? 'bg-info' : task.status === 'overdue' ? 'bg-danger' : 'bg-warning';
+            // Subject badge color
+            const subjectColors = ['bg-primary', 'bg-info', 'bg-secondary', 'bg-success', 'bg-warning'];
+            const subjectColor = subjectColors[Math.floor(Math.random() * subjectColors.length)];
+            // Due date
+            const dueDate = new Date(task.due);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            dueDate.setHours(0,0,0,0);
+            const diffDays = Math.ceil((dueDate - today) / (1000*60*60*24));
+            let dueDateStatus = '';
+            if (task.status === 'completed') {
+                dueDateStatus = '<small class="d-block text-success">Completed on time</small>';
+            } else if (diffDays < 0) {
+                dueDateStatus = `<small class="d-block text-danger">${Math.abs(diffDays)} days overdue</small>`;
+            } else if (diffDays <= 2) {
+                dueDateStatus = `<small class="d-block text-warning">Due in ${diffDays} days</small>`;
+            } else {
+                dueDateStatus = `<small class="d-block text-muted">Due in ${diffDays} days</small>`;
+            }
+            row.innerHTML = `
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="task-icon ${taskIconBg} me-3">
+                            <i class="bi ${taskIcon}"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 task-title">${task.name}</h6>
+                            <small class="text-muted">${task.description || 'No description provided'}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="subject-badge ${subjectColor}">${task.subject}</span>
+                </td>
+                <td>
+                    <span class="priority-badge ${priorityClass}">
+                        <i class="bi ${priorityIcon}"></i> ${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                    </span>
+                </td>
+                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                <td>
+                    <div>
+                        <strong>${dueDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</strong>
+                        ${dueDateStatus}
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-primary" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" title="${task.status === 'completed' ? 'View Details' : 'Mark Complete'}">
+                            <i class="bi ${task.status === 'completed' ? 'bi-eye' : 'bi-check'}"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+            taskTable.appendChild(row);
+        });
+    }
+    // Only run on tasks page
+    if (document.body.dataset.page === 'tasks') {
+        renderTasksFromStorage();
+        updateStatistics();
+        initializeFilters();
+        initializeSorting();
+    }
+    // Always update stats cards on load
+    if (typeof updateStatistics === 'function') {
+        updateStatistics();
+    }
+    // Also update stats after any table change
+    const taskTable = document.getElementById('taskTable');
+    if (taskTable) {
+        taskTable.addEventListener('click', function() {
+            setTimeout(updateStatistics, 200);
+        });
+    }
     console.log("JS loaded");
+
+    // ============================
+    // NAVIGATION ACTIVE STATE
+    // ============================
+    const currentPage = document.body.dataset.page;
+    const sidebarNavLinks = document.querySelectorAll('.sidebar .nav-link');
+    
+    sidebarNavLinks.forEach(link => {
+        const href = link.getAttribute('href');
+        if (href && href.includes(currentPage)) {
+            link.classList.add('active');
+        }
+    });
 
     // ============================
     // LOGIN BUTTON
@@ -75,60 +220,1340 @@ document.addEventListener("DOMContentLoaded", () => {
     if (addTaskForm) {
         addTaskForm.addEventListener('submit', function (e) {
             e.preventDefault();
+            // Get form values
+            const taskName = document.getElementById('taskName').value;
+            const taskDescription = document.getElementById('taskDescription').value;
+            const taskSubject = document.getElementById('taskSubject').value;
+            const taskPriority = document.getElementById('taskPriority').value;
+            const taskStatus = document.getElementById('taskStatus').value;
+            const taskDue = document.getElementById('taskDue').value;
+            // Save to localStorage
+            let tasks = JSON.parse(localStorage.getItem('tasksData')) || [];
+            tasks.push({
+                name: taskName,
+                description: taskDescription,
+                subject: taskSubject,
+                priority: taskPriority,
+                status: taskStatus,
+                due: taskDue
+            });
+            localStorage.setItem('tasksData', JSON.stringify(tasks));
+            // ...existing code for adding to table...
+            // Create priority badge
+            const priorityClass = taskPriority === 'high' ? 'priority-high' : 
+                                taskPriority === 'medium' ? 'priority-medium' : 'priority-low';
+            const priorityIcon = taskPriority === 'high' ? 'bi-arrow-up' : 
+                               taskPriority === 'medium' ? 'bi-dash' : 'bi-arrow-down';
+            // Create status badge
+            const statusClass = taskStatus === 'completed' ? 'bg-success' : 
+                              taskStatus === 'in-progress' ? 'bg-info' : 'bg-warning text-dark';
+            const statusText = taskStatus.charAt(0).toUpperCase() + taskStatus.slice(1).replace('-', ' ');
+            // Create task icon
+            const taskIcon = taskStatus === 'completed' ? 'bi-check-circle' : 
+                           taskStatus === 'in-progress' ? 'bi-arrow-clockwise' : 'bi-clock';
+            const taskIconBg = taskStatus === 'completed' ? 'bg-success' : 
+                             taskStatus === 'in-progress' ? 'bg-info' : 'bg-warning';
+            // Create subject badge color
+            const subjectColors = ['bg-primary', 'bg-info', 'bg-secondary', 'bg-success', 'bg-warning'];
+            const subjectColor = subjectColors[Math.floor(Math.random() * subjectColors.length)];
+            // Format due date
+            const dueDate = new Date(taskDue);
+            const today = new Date();
+            const diffTime = dueDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            let dueDateStatus = '';
+            if (taskStatus === 'completed') {
+                dueDateStatus = '<small class="d-block text-success">Completed on time</small>';
+            } else if (diffDays < 0) {
+                dueDateStatus = `<small class="d-block text-danger">${Math.abs(diffDays)} days overdue</small>`;
+            } else if (diffDays <= 2) {
+                dueDateStatus = `<small class="d-block text-warning">Due in ${diffDays} days</small>`;
+            } else {
+                dueDateStatus = `<small class="d-block text-muted">Due in ${diffDays} days</small>`;
+            }
             const table = document.getElementById('taskTable');
             const row = document.createElement('tr');
+            row.className = 'task-row';
+            row.setAttribute('data-status', taskStatus);
             row.innerHTML = `
-              <td>${document.getElementById('taskName').value}</td>
-              <td>${document.getElementById('taskSubject').value}</td>
-              <td><span class="badge ${document.getElementById('taskStatus').value === 'Completed' ? 'bg-success' : 'bg-warning text-dark'}">${document.getElementById('taskStatus').value}</span></td>
-              <td>${document.getElementById('taskDue').value}</td>
-              <td>
-                <button class="btn btn-sm btn-secondary">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="task-icon ${taskIconBg} me-3">
+                            <i class="bi ${taskIcon}"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 task-title">${taskName}</h6>
+                            <small class="text-muted">${taskDescription || 'No description provided'}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="subject-badge ${subjectColor}">${taskSubject}</span>
+                </td>
+                <td>
+                    <span class="priority-badge ${priorityClass}">
+                        <i class="bi ${priorityIcon}"></i> ${taskPriority.charAt(0).toUpperCase() + taskPriority.slice(1)}
+                    </span>
+                </td>
+                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                <td>
+                    <div>
+                        <strong>${dueDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</strong>
+                        ${dueDateStatus}
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-primary" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" title="${taskStatus === 'completed' ? 'View Details' : 'Mark Complete'}">
+                            <i class="bi ${taskStatus === 'completed' ? 'bi-eye' : 'bi-check'}"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
             `;
             table.appendChild(row);
             addTaskForm.reset();
             bootstrap.Modal.getInstance(document.getElementById('addTaskModal')).hide();
+            // Show success message (optional)
+            console.log('Task added successfully!');
         });
     }
 
     // ============================
-    // ADD SUBJECT
+    // SUBJECTS PAGE DYNAMIC CARD LOGIC
     // ============================
-    const addSubjectForm = document.getElementById('addSubjectForm');
-    if (addSubjectForm) {
+
+    if (document.body.dataset.page === 'subjects') {
+      // Subject data array
+      let subjects = [
+        {
+          name: 'Web Design',
+          code: 'WD101',
+          description: 'Frontend Development & UI/UX',
+          instructor: 'Dr. Aisyah',
+          instructorEmail: 'aisyah@uitm.edu.my',
+          credits: 3,
+          semester: '1',
+          year: '2024/2025',
+          days: 'Mon, Wed',
+          time: '2:00 PM - 4:00 PM',
+          room: 'A101',
+          color: 'primary',
+          icon: 'bi-palette',
+          grade: 'A-',
+          tasks: 12,
+          progress: 85
+        },
+        {
+          name: 'IT Fundamentals',
+          code: 'LCC501',
+          description: 'Computer Systems & Networks',
+          instructor: 'Mr. Hafiz',
+          instructorEmail: 'hafiz@uitm.edu.my',
+          credits: 4,
+          semester: '2',
+          year: '2024/2025',
+          days: 'Tue, Thu',
+          time: '10:00 AM - 12:00 PM',
+          room: 'B202',
+          color: 'info',
+          icon: 'bi-cpu',
+          grade: 'B+',
+          tasks: 8,
+          progress: 60
+        },
+        {
+          name: 'Research Methods',
+          code: 'RM301',
+          description: 'Research & Academic Writing',
+          instructor: 'Prof. Sarah',
+          instructorEmail: 'sarah@uitm.edu.my',
+          credits: 3,
+          semester: '1',
+          year: '2024/2025',
+          days: 'Fri',
+          time: '8:00 AM - 10:00 AM',
+          room: 'C303',
+          color: 'success',
+          icon: 'bi-search',
+          grade: 'A',
+          tasks: 6,
+          progress: 100
+        }
+      ];
+
+      // Update subject stats
+      function updateSubjectStats() {
+    // Total subjects
+    document.querySelector('.stats-primary .stats-number').textContent = subjects.length;
+    // Average credits
+    const avgCredits = subjects.length ? (subjects.reduce((sum, s) => sum + Number(s.credits), 0) / subjects.length).toFixed(1) : '0';
+    document.querySelector('.stats-success .stats-number').textContent = avgCredits;
+    // Instructors
+    const instructorSet = new Set(subjects.map(s => s.instructor));
+    document.querySelector('.stats-info .stats-number').textContent = instructorSet.size;
+    // Total credit hours
+    const totalCredits = subjects.reduce((sum, s) => sum + Number(s.credits), 0);
+    document.querySelector('.stats-warning .stats-number').textContent = totalCredits;
+
+    // Update header badges with live data
+    const headerSubjects = document.querySelector('.header-subjects-count');
+    const headerInstructors = document.querySelector('.header-instructors-count');
+    const headerCredits = document.querySelector('.header-credits-count');
+    if (headerSubjects) headerSubjects.textContent = subjects.length;
+    if (headerInstructors) headerInstructors.textContent = instructorSet.size;
+    if (headerCredits) headerCredits.textContent = totalCredits;
+      }
+
+      // Render all subject cards
+      function renderSubjectCards() {
+        const grid = document.getElementById('subjectCardGrid');
+        grid.innerHTML = '';
+        subjects.forEach((subj, idx) => {
+          grid.innerHTML += `
+            <div class="col-lg-4 col-md-6">
+              <div class="subject-card">
+                <div class="subject-header bg-${subj.color}">
+                  <div class="subject-icon">
+                    <i class="bi ${subj.icon}"></i>
+                  </div>
+                  <div class="subject-info">
+                    <h5 class="subject-title">${subj.name}</h5>
+                    <p class="subject-code">${subj.code}</p>
+                  </div>
+                </div>
+                <div class="subject-body">
+                  <div class="instructor-info mb-3">
+                    <div class="d-flex align-items-center">
+                      <div class="instructor-avatar bg-${subj.color} me-2">
+                        <i class="bi bi-person"></i>
+                      </div>
+                      <div>
+                        <strong>${subj.instructor}</strong>
+                        <small class="d-block text-muted">${subj.instructorEmail}</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="subject-stats">
+                    <div class="row text-center">
+                      <div class="col-4">
+                        <div class="stat-item">
+                          <strong>${subj.credits}</strong>
+                          <small>Credits</small>
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <div class="stat-item">
+                          <strong>${subj.tasks}</strong>
+                          <small>Tasks</small>
+                        </div>
+                      </div>
+                      <div class="col-4">
+                        <div class="stat-item">
+                          <strong>${subj.grade}</strong>
+                          <small>Grade</small>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 6px;">
+                      <div class="progress-bar bg-${subj.progress === 100 ? 'success' : subj.progress >= 80 ? 'primary' : subj.progress >= 60 ? 'warning' : 'danger'}" style="width: ${subj.progress}%;"></div>
+                    </div>
+                    <small class="text-muted">${subj.progress}% Complete</small>
+                  </div>
+                </div>
+                <div class="subject-footer">
+                  <div class="btn-group w-100" role="group">
+                    <button class="btn btn-outline-primary btn-sm" data-action="view" data-idx="${idx}"><i class="bi bi-eye"></i> View</button>
+                    <button class="btn btn-outline-secondary btn-sm" data-action="edit" data-idx="${idx}"><i class="bi bi-pencil"></i> Edit</button>
+                    <button class="btn btn-outline-danger btn-sm" data-action="delete" data-idx="${idx}"><i class="bi bi-trash"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        updateSubjectStats();
+      }
+
+      renderSubjectCards();
+
+      // Add Subject
+      const addSubjectForm = document.getElementById('addSubjectForm');
+      if (addSubjectForm) {
         addSubjectForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            const table = document.getElementById('subjectTable');
-            const row = document.createElement('tr');
-            row.innerHTML = `
-              <td>${document.getElementById('subjectName').value}</td>
-              <td>${document.getElementById('subjectCode').value}</td>
-              <td>${document.getElementById('instructor').value}</td>
-              <td>
-                <button class="btn btn-sm btn-secondary">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>`;
-            table.appendChild(row);
-            addSubjectForm.reset();
-            bootstrap.Modal.getInstance(document.getElementById('addSubjectModal')).hide();
+          e.preventDefault();
+          const subj = {
+            name: document.getElementById('subjectName').value,
+            code: document.getElementById('subjectCode').value,
+            description: document.getElementById('subjectDescription').value,
+            instructor: document.getElementById('instructor').value,
+            instructorEmail: document.getElementById('instructorEmail').value,
+            credits: document.getElementById('subjectCredits').value,
+            semester: document.getElementById('subjectSemester').value,
+            year: document.getElementById('subjectYear').value,
+            days: document.getElementById('subjectDays').value,
+            time: document.getElementById('subjectTime').value,
+            room: document.getElementById('subjectRoom').value,
+            color: document.getElementById('subjectColor').value,
+            icon: document.getElementById('subjectIcon').value,
+            grade: '-',
+            tasks: 0,
+            progress: 0
+          };
+          subjects.push(subj);
+          renderSubjectCards();
+          addSubjectForm.reset();
+          bootstrap.Modal.getInstance(document.getElementById('addSubjectModal')).hide();
         });
+      }
+
+      // Card actions (edit, view, delete)
+      document.getElementById('subjectCardGrid').addEventListener('click', function(e) {
+        const btn = e.target.closest('button[data-action]');
+        if (!btn) return;
+        const idx = btn.getAttribute('data-idx');
+        const action = btn.getAttribute('data-action');
+        if (action === 'delete') {
+          if (confirm('Delete this subject?')) {
+            subjects.splice(idx, 1);
+            renderSubjectCards();
+          }
+        } else if (action === 'edit') {
+          const subj = subjects[idx];
+          document.getElementById('editSubjectIndex').value = idx;
+          document.getElementById('editSubjectName').value = subj.name;
+          document.getElementById('editSubjectCode').value = subj.code;
+          document.getElementById('editSubjectDescription').value = subj.description;
+          document.getElementById('editInstructor').value = subj.instructor;
+          document.getElementById('editInstructorEmail').value = subj.instructorEmail;
+          document.getElementById('editSubjectCredits').value = subj.credits;
+          document.getElementById('editSubjectSemester').value = subj.semester;
+          document.getElementById('editSubjectYear').value = subj.year;
+          document.getElementById('editSubjectDays').value = subj.days;
+          document.getElementById('editSubjectTime').value = subj.time;
+          document.getElementById('editSubjectRoom').value = subj.room;
+          document.getElementById('editSubjectColor').value = subj.color;
+          document.getElementById('editSubjectIcon').value = subj.icon;
+          new bootstrap.Modal(document.getElementById('editSubjectModal')).show();
+        } else if (action === 'view') {
+          const subj = subjects[idx];
+          document.getElementById('viewSubjectDetails').innerHTML = `
+            <h4 class="mb-2">${subj.name} <span class="badge bg-${subj.color}">${subj.code}</span></h4>
+            <p>${subj.description || ''}</p>
+            <ul class="list-group mb-2">
+              <li class="list-group-item"><strong>Instructor:</strong> ${subj.instructor} (${subj.instructorEmail})</li>
+              <li class="list-group-item"><strong>Credits:</strong> ${subj.credits}</li>
+              <li class="list-group-item"><strong>Schedule:</strong> ${subj.days} ${subj.time} (${subj.room})</li>
+              <li class="list-group-item"><strong>Semester:</strong> ${subj.semester} | <strong>Year:</strong> ${subj.year}</li>
+            </ul>
+            <div class="progress mb-2" style="height: 8px;">
+              <div class="progress-bar bg-${subj.progress === 100 ? 'success' : subj.progress >= 80 ? 'primary' : subj.progress >= 60 ? 'warning' : 'danger'}" style="width: ${subj.progress}%;"></div>
+            </div>
+            <small class="text-muted">${subj.progress}% Complete</small>
+          `;
+          new bootstrap.Modal(document.getElementById('viewSubjectModal')).show();
+        }
+      });
+
+      // Edit subject form submit
+      const editSubjectForm = document.getElementById('editSubjectForm');
+      if (editSubjectForm) {
+        editSubjectForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const idx = document.getElementById('editSubjectIndex').value;
+          subjects[idx] = {
+            ...subjects[idx],
+            name: document.getElementById('editSubjectName').value,
+            code: document.getElementById('editSubjectCode').value,
+            description: document.getElementById('editSubjectDescription').value,
+            instructor: document.getElementById('editInstructor').value,
+            instructorEmail: document.getElementById('editInstructorEmail').value,
+            credits: document.getElementById('editSubjectCredits').value,
+            semester: document.getElementById('editSubjectSemester').value,
+            year: document.getElementById('editSubjectYear').value,
+            days: document.getElementById('editSubjectDays').value,
+            time: document.getElementById('editSubjectTime').value,
+            room: document.getElementById('editSubjectRoom').value,
+            color: document.getElementById('editSubjectColor').value,
+            icon: document.getElementById('editSubjectIcon').value
+          };
+          renderSubjectCards();
+          bootstrap.Modal.getInstance(document.getElementById('editSubjectModal')).hide();
+        });
+      }
     }
 
     // ============================
-    // EDIT PROFILE
+    // TASK FILTERS AND STATISTICS
     // ============================
-    const editProfileForm = document.getElementById('editProfileForm');
-    if (editProfileForm) {
-        editProfileForm.addEventListener('submit', function (e) {
-            e.preventDefault();
-            document.getElementById('studentName').textContent = document.getElementById('editName').value;
-            document.getElementById('studentEmail').textContent = document.getElementById('editEmail').value;
-            document.getElementById('studentProgram').textContent = document.getElementById('editProgram').value;
-
-            editProfileForm.reset();
-            bootstrap.Modal.getInstance(document.getElementById('editProfileModal')).hide();
+    
+    // Function to determine if a task is overdue
+    function isTaskOverdue(taskRow) {
+        const dueDateElement = taskRow.querySelector('td:nth-child(5) strong');
+        if (!dueDateElement) return false;
+        
+        const dueDateText = dueDateElement.textContent.trim();
+        const dueDate = new Date(dueDateText);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Reset time to start of day
+        dueDate.setHours(0, 0, 0, 0);
+        
+        const status = taskRow.getAttribute('data-status');
+        return dueDate < today && status !== 'completed';
+    }
+    
+    // Function to get task status from row
+    function getTaskStatus(taskRow) {
+        const status = taskRow.getAttribute('data-status');
+        if (isTaskOverdue(taskRow)) {
+            return 'overdue';
+        }
+        return status || 'pending';
+    }
+    
+    // Function to update statistics
+    function updateStatistics() {
+        const taskRows = document.querySelectorAll('#taskTable .task-row');
+        let stats = {
+            total: 0,
+            completed: 0,
+            pending: 0,
+            inProgress: 0,
+            overdue: 0,
+            thisWeek: 0
+        };
+        
+        taskRows.forEach(row => {
+            // Count all tasks regardless of visibility/filter
+            stats.total++;
+            const status = getTaskStatus(row);
+            
+            // Check if task is due this week
+            const dueDateElement = row.querySelector('td:nth-child(5) strong');
+            if (dueDateElement) {
+                const dueDate = new Date(dueDateElement.textContent.trim());
+                const today = new Date();
+                const endOfWeek = new Date(today);
+                endOfWeek.setDate(today.getDate() + (7 - today.getDay()));
+                endOfWeek.setHours(23, 59, 59, 999);
+                
+                if (dueDate <= endOfWeek && status !== 'completed') {
+                    stats.thisWeek++;
+                }
+            }
+            
+            switch (status) {
+                case 'completed':
+                    stats.completed++;
+                    break;
+                case 'in-progress':
+                    stats.inProgress++;
+                    break;
+                case 'overdue':
+                    stats.overdue++;
+                    break;
+                default:
+                    stats.pending++;
+            }
         });
+        
+        // Update the statistics cards
+        const totalElement = document.querySelector('.stats-card.stats-primary .stats-number');
+        const completedElement = document.querySelector('.stats-card.stats-success .stats-number');
+        const pendingElement = document.querySelector('.stats-card.stats-warning .stats-number');
+        const inProgressElement = document.querySelector('.stats-card.stats-info .stats-number');
+        const overdueElement = document.querySelector('.stats-card.stats-danger .stats-number');
+        const thisWeekElement = document.querySelector('.stats-card.stats-secondary .stats-number');
+
+        if (totalElement) totalElement.textContent = stats.total;
+        if (completedElement) completedElement.textContent = stats.completed;
+        if (pendingElement) pendingElement.textContent = stats.pending;
+        if (inProgressElement) inProgressElement.textContent = stats.inProgress;
+        if (overdueElement) overdueElement.textContent = stats.overdue;
+        if (thisWeekElement) thisWeekElement.textContent = stats.thisWeek;
+
+        // Update header badges with live data
+        const headerCompleted = document.querySelector('.header-completed-count');
+        const headerPending = document.querySelector('.header-pending-count');
+        const headerOverdue = document.querySelector('.header-overdue-count');
+        if (headerCompleted) headerCompleted.textContent = stats.completed;
+        if (headerPending) headerPending.textContent = stats.pending;
+        if (headerOverdue) headerOverdue.textContent = stats.overdue;
+
+        // Update completion rate
+        const completionRate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+        const completionRateElement = document.querySelector('.stats-card.stats-success .stats-change');
+        if (completionRateElement) {
+            completionRateElement.innerHTML = `<i class="bi bi-arrow-up"></i> ${completionRate}% completion rate`;
+        }
+
+        // Pending count is already updated above
+
+        // Update overdue status message
+        const overdueStatusElement = document.querySelector('.stats-card.stats-danger .stats-change');
+        if (overdueStatusElement) {
+            if (stats.overdue > 0) {
+                overdueStatusElement.innerHTML = `<i class="bi bi-exclamation"></i> ${stats.overdue > 1 ? 'Need' : 'Needs'} attention`;
+                overdueStatusElement.className = 'stats-change text-danger';
+            } else {
+                overdueStatusElement.innerHTML = `<i class="bi bi-check-circle"></i> All on track`;
+                overdueStatusElement.className = 'stats-change text-success';
+            }
+        }
+    }
+    
+    // Function to filter tasks
+    function filterTasks(filterType) {
+        const taskRows = document.querySelectorAll('#taskTable .task-row');
+        
+        taskRows.forEach(row => {
+            const status = getTaskStatus(row);
+            let shouldShow = true;
+            
+            switch (filterType) {
+                case 'all':
+                    shouldShow = true;
+                    break;
+                case 'pending':
+                    shouldShow = status === 'pending';
+                    break;
+                case 'in-progress':
+                    shouldShow = status === 'in-progress';
+                    break;
+                case 'completed':
+                    shouldShow = status === 'completed';
+                    break;
+                case 'overdue':
+                    shouldShow = status === 'overdue';
+                    break;
+                default:
+                    shouldShow = true;
+            }
+            
+            row.style.display = shouldShow ? '' : 'none';
+        });
+        
+        // No need to update statistics after filtering - they show total counts
+    }
+    
+    // Initialize filter event listeners
+    function initializeFilters() {
+        const filterButtons = document.querySelectorAll('input[name="taskFilter"]');
+        
+        filterButtons.forEach(button => {
+            button.addEventListener('change', function() {
+                if (this.checked) {
+                    const filterId = this.id;
+                    let filterType = 'all';
+                    
+                    switch (filterId) {
+                        case 'filterAll':
+                            filterType = 'all';
+                            break;
+                        case 'filterPending':
+                            filterType = 'pending';
+                            break;
+                        case 'filterInProgress':
+                            filterType = 'in-progress';
+                            break;
+                        case 'filterCompleted':
+                            filterType = 'completed';
+                            break;
+                        case 'filterOverdue':
+                            filterType = 'overdue';
+                            break;
+                    }
+                    
+                    filterTasks(filterType);
+                }
+            });
+        });
+    }
+    
+    // Initialize sorting functionality
+    function initializeSorting() {
+        const sortButtons = document.querySelectorAll('.dropdown-menu .dropdown-item');
+        
+        sortButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const sortText = this.textContent.trim();
+                
+                const taskTable = document.getElementById('taskTable');
+                const taskRows = Array.from(taskTable.querySelectorAll('.task-row'));
+                
+                taskRows.sort((a, b) => {
+                    if (sortText.includes('Due Date (Newest)')) {
+                        const dateA = new Date(a.querySelector('td:nth-child(5) strong').textContent);
+                        const dateB = new Date(b.querySelector('td:nth-child(5) strong').textContent);
+                        return dateB - dateA;
+                    } else if (sortText.includes('Due Date (Oldest)')) {
+                        const dateA = new Date(a.querySelector('td:nth-child(5) strong').textContent);
+                        const dateB = new Date(b.querySelector('td:nth-child(5) strong').textContent);
+                        return dateA - dateB;
+                    } else if (sortText.includes('Name (A-Z)')) {
+                        const nameA = a.querySelector('.task-title').textContent.toLowerCase();
+                        const nameB = b.querySelector('.task-title').textContent.toLowerCase();
+                        return nameA.localeCompare(nameB);
+                    } else if (sortText.includes('Name (Z-A)')) {
+                        const nameA = a.querySelector('.task-title').textContent.toLowerCase();
+                        const nameB = b.querySelector('.task-title').textContent.toLowerCase();
+                        return nameB.localeCompare(nameA);
+                    }
+                    return 0;
+                });
+                
+                // Re-append sorted rows
+                taskRows.forEach(row => taskTable.appendChild(row));
+                
+                // Update the dropdown button text
+                const dropdownButton = document.querySelector('.dropdown button');
+                if (dropdownButton) {
+                    dropdownButton.innerHTML = `<i class="bi bi-funnel me-2"></i>${sortText}`;
+                }
+            });
+        });
+    }
+    
+    // Initialize all task-related functionality
+    if (document.getElementById('taskTable')) {
+        // Sync Task Master achievement in tasks.html
+        function syncTaskMasterAchievement() {
+            // Count completed tasks from the table
+            const taskRows = document.querySelectorAll('#taskTable .task-row');
+            let completed = 0;
+            let total = 0;
+            taskRows.forEach(row => {
+                let status = row.getAttribute('data-status');
+                // Overdue logic
+                const dueDateElement = row.querySelector('td:nth-child(5) strong');
+                if (dueDateElement) {
+                    const dueDate = new Date(dueDateElement.textContent.trim());
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    dueDate.setHours(0, 0, 0, 0);
+                    if (dueDate < today && status !== 'completed') status = 'overdue';
+                }
+                total++;
+                if (status === 'completed') completed++;
+            });
+            // Fallback to localStorage if table is empty
+            if (total === 0) {
+                const tasks = JSON.parse(localStorage.getItem('tasksData')) || [];
+                total = tasks.length;
+                completed = tasks.filter(t => t.status === 'completed').length;
+            }
+            // Update the achievement UI (adjust selectors as needed)
+            const taskMasterCount = document.querySelector('.achievement-taskmaster-count, .taskmaster-count');
+            const taskMasterBar = document.querySelector('.achievement-taskmaster-bar, .taskmaster-bar, .achievement-taskmaster-progress, .taskmaster-progress');
+            const taskMasterGoal = 20;
+            if (taskMasterCount) taskMasterCount.textContent = `${completed}/${taskMasterGoal}`;
+            if (taskMasterBar) {
+                const percent = Math.round((completed / taskMasterGoal) * 100);
+                taskMasterBar.style.width = percent + '%';
+                taskMasterBar.setAttribute('aria-valuenow', completed);
+            }
+        }
+        syncTaskMasterAchievement();
+        // Also update on add/edit/delete
+        if (taskTable) {
+            taskTable.addEventListener('click', function(e) {
+                setTimeout(syncTaskMasterAchievement, 200);
+            });
+        }
+        if (addTaskForm) {
+            addTaskForm.addEventListener('submit', function() {
+                setTimeout(syncTaskMasterAchievement, 200);
+            });
+        }
+        initializeFilters();
+        initializeSorting();
+        updateStatistics(); // Initial statistics update
+        
+        // Update statistics whenever a task is added
+        const originalAddTask = addTaskForm;
+        // Sync all current table data to localStorage on page load
+        function syncTableToLocalStorage() {
+            const taskRows = document.querySelectorAll('#taskTable .task-row');
+            let tasks = [];
+            taskRows.forEach(row => {
+                const name = row.querySelector('.task-title')?.textContent || '';
+                const description = row.querySelector('.task-title')?.nextElementSibling?.textContent || '';
+                const subject = row.querySelector('.subject-badge')?.textContent || '';
+                const priority = row.querySelector('.priority-badge')?.textContent.trim().toLowerCase() || '';
+                let status = row.getAttribute('data-status');
+                const due = row.querySelector('td:nth-child(5) strong')?.textContent || '';
+                // Overdue logic
+                const dueDate = new Date(due);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                dueDate.setHours(0, 0, 0, 0);
+                if (dueDate < today && status !== 'completed') status = 'overdue';
+                tasks.push({ name, description, subject, priority, status, due });
+            });
+            localStorage.setItem('tasksData', JSON.stringify(tasks));
+        }
+        syncTableToLocalStorage();
+        if (originalAddTask) {
+            originalAddTask.addEventListener('submit', function() {
+                setTimeout(() => {
+                    updateStatistics();
+                    syncTableToLocalStorage();
+                }, 100);
+            });
+        }
+        // Also sync on delete/edit
+        const taskTable = document.getElementById('taskTable');
+        if (taskTable) {
+            taskTable.addEventListener('click', function(e) {
+                setTimeout(syncTableToLocalStorage, 200);
+            });
+        }
+    }
+
+    // ============================
+    // DASHBOARD CHARTS
+    // ============================
+    if (document.getElementById('taskChart')) {
+        initializeCharts();
+        // Also update dashboard stats cards to match live task data
+        let stats = { total: 0, completed: 0, pending: 0, inProgress: 0, overdue: 0 };
+        let statsSource = [];
+        const taskRows = document.querySelectorAll('#taskTable .task-row');
+        if (taskRows.length > 0) {
+            taskRows.forEach(row => {
+                let status = row.getAttribute('data-status');
+                // Overdue logic
+                const dueDateElement = row.querySelector('td:nth-child(5) strong');
+                if (dueDateElement) {
+                    const dueDate = new Date(dueDateElement.textContent.trim());
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    dueDate.setHours(0, 0, 0, 0);
+                    if (dueDate < today && status !== 'completed') status = 'overdue';
+                }
+                stats.total++;
+                if (status === 'completed') stats.completed++;
+                else if (status === 'in-progress') stats.inProgress++;
+                else if (status === 'overdue') stats.overdue++;
+                else stats.pending++;
+            });
+        } else {
+            // fallback to localStorage if no table
+            statsSource = JSON.parse(localStorage.getItem('tasksData')) || [];
+            statsSource.forEach(task => {
+                let status = task.status;
+                // Overdue logic
+                const dueDate = new Date(task.due);
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                dueDate.setHours(0, 0, 0, 0);
+                if (dueDate < today && status !== 'completed') status = 'overdue';
+                stats.total++;
+                if (status === 'completed') stats.completed++;
+                else if (status === 'in-progress') stats.inProgress++;
+                else if (status === 'overdue') stats.overdue++;
+                else stats.pending++;
+            });
+        }
+        // Update dashboard stats cards if present
+        const totalElement = document.querySelector('.stats-card.stats-primary .stats-number');
+        const completedElement = document.querySelector('.stats-card.stats-success .stats-number');
+        const pendingElement = document.querySelector('.stats-card.stats-warning .stats-number');
+        const inProgressElement = document.querySelector('.stats-card.stats-info .stats-number');
+        const overdueElement = document.querySelector('.stats-card.stats-danger .stats-number');
+        if (totalElement) totalElement.textContent = stats.total;
+        if (completedElement) completedElement.textContent = stats.completed;
+        if (pendingElement) pendingElement.textContent = stats.pending;
+        if (inProgressElement) inProgressElement.textContent = stats.inProgress;
+        if (overdueElement) overdueElement.textContent = stats.overdue;
+        // Update completion rate
+        const completionRate = stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0;
+        const completionRateElement = document.querySelector('.stats-card.stats-success .stats-change');
+        if (completionRateElement) {
+            completionRateElement.innerHTML = `<i class="bi bi-arrow-up"></i> ${completionRate}% completion rate`;
+        }
+        // Update overdue status message
+        const overdueStatusElement = document.querySelector('.stats-card.stats-danger .stats-change');
+        if (overdueStatusElement) {
+            if (stats.overdue > 0) {
+                overdueStatusElement.innerHTML = `<i class="bi bi-exclamation"></i> ${stats.overdue > 1 ? 'Need' : 'Needs'} attention`;
+                overdueStatusElement.className = 'stats-change text-danger';
+            } else {
+                overdueStatusElement.innerHTML = `<i class="bi bi-check-circle"></i> All on track`;
+                overdueStatusElement.className = 'stats-change text-success';
+            }
+        }
     }
 });
+
+// Chart Initialization Function
+function initializeCharts() {
+    // Task Completion Doughnut Chart
+    const taskCtx = document.getElementById('taskChart').getContext('2d');
+    // Get live stats from the DOM (from tasks table if available), else from localStorage
+    let completed = 0, inProgress = 0, pending = 0, overdue = 0;
+    let statsSource = [];
+    const taskRows = document.querySelectorAll('#taskTable .task-row');
+    if (taskRows.length > 0) {
+        taskRows.forEach(row => {
+            let status = row.getAttribute('data-status');
+            // Overdue logic (reuse from getTaskStatus)
+            const dueDateElement = row.querySelector('td:nth-child(5) strong');
+            if (dueDateElement) {
+                const dueDate = new Date(dueDateElement.textContent.trim());
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                dueDate.setHours(0, 0, 0, 0);
+                if (dueDate < today && status !== 'completed') status = 'overdue';
+            }
+            if (status === 'completed') completed++;
+            else if (status === 'in-progress') inProgress++;
+            else if (status === 'overdue') overdue++;
+            else pending++;
+        });
+    } else {
+        // fallback to localStorage if no table
+        statsSource = JSON.parse(localStorage.getItem('tasksData')) || [];
+        statsSource.forEach(task => {
+            let status = task.status;
+            // Overdue logic
+            const dueDate = new Date(task.due);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            dueDate.setHours(0, 0, 0, 0);
+            if (dueDate < today && status !== 'completed') status = 'overdue';
+            if (status === 'completed') completed++;
+            else if (status === 'in-progress') inProgress++;
+            else if (status === 'overdue') overdue++;
+            else pending++;
+        });
+    }
+    // Chart.js cannot render if all data is zero, so ensure at least one value is present
+    let chartData = [completed, inProgress, pending, overdue];
+    if (chartData.every(v => v === 0)) chartData = [1, 0, 0, 0];
+    const taskChart = new Chart(taskCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Completed', 'In Progress', 'Pending', 'Overdue'],
+            datasets: [{
+                data: chartData,
+                backgroundColor: [
+                    '#10b981', // Success green
+                    '#3b82f6', // Primary blue
+                    '#f59e0b', // Warning yellow
+                    '#ef4444'  // Danger red
+                ],
+                borderWidth: 0,
+                cutout: '60%'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        usePointStyle: true,
+                        font: {
+                            size: 12
+                        }
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const label = context.label || '';
+                            const value = context.parsed;
+                            const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                            const percentage = Math.round((value / total) * 100);
+                            return `${label}: ${value} tasks (${percentage}%)`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+    taskChart.update();
+
+    // Weekly Study Hours Bar Chart
+    const studyCtx = document.getElementById('studyChart').getContext('2d');
+    const studyChart = new Chart(studyCtx, {
+        type: 'bar',
+        data: {
+            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            datasets: [{
+                label: 'Study Hours',
+                data: [3, 5, 2, 8, 6, 4, 1],
+                backgroundColor: [
+                    'rgba(139, 69, 19, 0.8)',   // Monday
+                    'rgba(255, 99, 132, 0.8)',  // Tuesday
+                    'rgba(54, 162, 235, 0.8)',  // Wednesday
+                    'rgba(255, 206, 86, 0.8)',  // Thursday
+                    'rgba(75, 192, 192, 0.8)',  // Friday
+                    'rgba(153, 102, 255, 0.8)', // Saturday
+                    'rgba(255, 159, 64, 0.8)'   // Sunday
+                ],
+                borderColor: [
+                    'rgba(139, 69, 19, 1)',
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 2,
+                borderRadius: 8,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 10,
+                    ticks: {
+                        stepSize: 2,
+                        callback: function(value) {
+                            return value + 'h';
+                        }
+                    },
+                    grid: {
+                        color: 'rgba(0,0,0,0.05)'
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.parsed.y} hours studied`;
+                        }
+                    }
+                }
+            },
+            elements: {
+                bar: {
+                    borderRadius: 8
+                }
+            }
+        }
+    });
+
+    // Add click handlers for interactive features
+    taskChart.options.onClick = (event, elements) => {
+        if (elements.length > 0) {
+            const dataIndex = elements[0].index;
+            const label = taskChart.data.labels[dataIndex];
+            console.log(`Clicked on ${label} section`);
+            // You could navigate to filtered tasks view here
+        }
+    };
+
+    studyChart.options.onClick = (event, elements) => {
+        if (elements.length > 0) {
+            const dataIndex = elements[0].index;
+            const day = studyChart.data.labels[dataIndex];
+            const hours = studyChart.data.datasets[0].data[dataIndex];
+            console.log(`${day}: ${hours} hours`);
+            // You could show detailed schedule for that day
+        }
+    };
+}
+
+// Schedule Form Handler
+document.addEventListener('DOMContentLoaded', function() {
+    const scheduleForm = document.getElementById('scheduleForm');
+    if (scheduleForm) {
+        scheduleForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const subject = document.getElementById('studySubject').value;
+            const date = document.getElementById('studyDate').value;
+            const time = document.getElementById('studyTime').value;
+            const duration = document.getElementById('studyDuration').value;
+            const notes = document.getElementById('studyNotes').value;
+            
+            // Here you would typically save to localStorage or send to a server
+            const scheduleData = {
+                subject,
+                date,
+                time,
+                duration: parseFloat(duration),
+                notes,
+                created: new Date().toISOString()
+            };
+            
+            // Save to localStorage for demo purposes
+            let schedules = JSON.parse(localStorage.getItem('studySchedules')) || [];
+            schedules.push(scheduleData);
+            localStorage.setItem('studySchedules', JSON.stringify(schedules));
+            
+            // Show success message
+            alert(`Study session scheduled successfully!\nSubject: ${subject}\nDate: ${date}\nTime: ${time}`);
+            
+            // Reset form and close modal
+            scheduleForm.reset();
+            const modal = bootstrap.Modal.getInstance(document.getElementById('scheduleModal'));
+            modal.hide();
+        });
+    }
+    
+    // Set minimum date to today
+    const studyDateInput = document.getElementById('studyDate');
+    if (studyDateInput) {
+        const today = new Date().toISOString().split('T')[0];
+        studyDateInput.min = today;
+        studyDateInput.value = today;
+    }
+    
+    // Add some interactive features
+    addInteractiveFeatures();
+});
+
+function addInteractiveFeatures() {
+    // Animate stats cards on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+    
+    // Observe stats cards
+    document.querySelectorAll('.stats-card').forEach(card => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(30px)';
+        card.style.transition = 'all 0.6s ease-out';
+        observer.observe(card);
+    });
+    
+    // Add loading state to charts
+    const chartContainers = document.querySelectorAll('.chart-body');
+    chartContainers.forEach(container => {
+        container.classList.add('loading');
+        setTimeout(() => {
+            container.classList.remove('loading');
+        }, 1500);
+    });
+    
+    // Add click effects to cards
+    document.querySelectorAll('.stats-card, .sidebar-card, .chart-container').forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+
+    // ============================
+    // TASK ACTIONS (EDIT, DELETE, VIEW)
+    // ============================
+    
+    // Add event delegation for task action buttons
+    const taskTable = document.getElementById('taskTable');
+    if (taskTable) {
+        taskTable.addEventListener('click', function(e) {
+            const button = e.target.closest('button');
+            if (!button) return;
+            
+            const row = button.closest('tr');
+            if (!row) return;
+            
+            const title = button.getAttribute('title') || button.querySelector('i').className;
+            
+            if (title.includes('Edit') || button.querySelector('.bi-pencil')) {
+                editTask(row);
+            } else if (title.includes('Delete') || button.querySelector('.bi-trash')) {
+                deleteTask(row);
+            } else if (title.includes('View') || title.includes('Details') || button.querySelector('.bi-eye')) {
+                viewTask(row);
+            } else if (title.includes('Complete') || button.querySelector('.bi-check')) {
+                markTaskComplete(row);
+            }
+        });
+    }
+    
+    // Edit Task Function
+    function editTask(row) {
+        const taskName = row.querySelector('.task-title').textContent;
+        const taskDescription = row.querySelector('.task-title').nextElementSibling.textContent;
+        const taskSubject = row.querySelector('.subject-badge').textContent;
+        const taskPriority = row.querySelector('.priority-badge').textContent.toLowerCase().trim();
+        const taskStatus = row.getAttribute('data-status');
+        const taskDueText = row.querySelector('td:nth-child(5) strong').textContent;
+        
+        // Parse due date
+        const dueDate = new Date(taskDueText);
+        const formattedDue = dueDate.toISOString().slice(0, 16);
+        
+        // Populate edit modal
+        document.getElementById('editTaskName').value = taskName;
+        document.getElementById('editTaskDescription').value = taskDescription === 'No description provided' ? '' : taskDescription;
+        document.getElementById('editTaskSubject').value = taskSubject;
+        document.getElementById('editTaskPriority').value = taskPriority;
+        document.getElementById('editTaskStatus').value = taskStatus;
+        document.getElementById('editTaskDue').value = formattedDue;
+        
+        // Store the row reference
+        document.getElementById('editTaskIndex').value = Array.from(row.parentNode.children).indexOf(row);
+        
+        // Show modal
+        new bootstrap.Modal(document.getElementById('editTaskModal')).show();
+    }
+    
+    // View Task Function
+    function viewTask(row) {
+        const taskName = row.querySelector('.task-title').textContent;
+        const taskDescription = row.querySelector('.task-title').nextElementSibling.textContent;
+        const taskSubject = row.querySelector('.subject-badge').textContent;
+        const taskPriorityElement = row.querySelector('.priority-badge');
+        const taskStatusElement = row.querySelector('.badge');
+        const taskDueText = row.querySelector('td:nth-child(5) strong').textContent;
+        
+        // Populate view modal
+        document.getElementById('viewTaskName').textContent = taskName;
+        document.getElementById('viewTaskDescription').textContent = taskDescription === 'No description provided' ? 'No description provided' : taskDescription;
+        document.getElementById('viewTaskSubject').innerHTML = `<span class="subject-badge ${row.querySelector('.subject-badge').className}">${taskSubject}</span>`;
+        document.getElementById('viewTaskPriority').innerHTML = taskPriorityElement.outerHTML;
+        document.getElementById('viewTaskStatus').innerHTML = taskStatusElement.outerHTML;
+        document.getElementById('viewTaskDue').textContent = taskDueText;
+        
+        // Show modal
+        new bootstrap.Modal(document.getElementById('viewTaskModal')).show();
+    }
+    
+    // Delete Task Function
+    function deleteTask(row) {
+        const taskName = row.querySelector('.task-title').textContent;
+        
+        if (confirm(`Are you sure you want to delete the task "${taskName}"?`)) {
+            // Remove from DOM
+            row.remove();
+            // Remove from localStorage
+            let tasks = JSON.parse(localStorage.getItem('tasksData')) || [];
+            // Identify the task by name, description, subject, and due date
+            const taskDescription = row.querySelector('.task-title').nextElementSibling.textContent;
+            const taskSubject = row.querySelector('.subject-badge').textContent;
+            const dueDate = row.querySelector('td:nth-child(5) strong').textContent;
+            tasks = tasks.filter(task => {
+                // Compare all relevant fields
+                return !(
+                    task.name === taskName &&
+                    (task.description || 'No description provided') === taskDescription &&
+                    task.subject === taskSubject &&
+                    new Date(task.due).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) === dueDate
+                );
+            });
+            localStorage.setItem('tasksData', JSON.stringify(tasks));
+            updateStatistics();
+            console.log('Task deleted successfully!');
+        }
+    }
+    
+    // Mark Task Complete Function
+    function markTaskComplete(row) {
+        const taskName = row.querySelector('.task-title').textContent;
+        
+        if (confirm(`Mark task "${taskName}" as completed?`)) {
+            // Update row data
+            row.setAttribute('data-status', 'completed');
+            
+            // Update task icon
+            const taskIcon = row.querySelector('.task-icon');
+            taskIcon.className = 'task-icon bg-success me-3';
+            taskIcon.innerHTML = '<i class="bi bi-check-circle"></i>';
+            
+            // Update status badge
+            const statusBadge = row.querySelector('.badge');
+            statusBadge.className = 'badge bg-success';
+            statusBadge.textContent = 'Completed';
+            
+            // Update due date status
+            const dueDateSmall = row.querySelector('td:nth-child(5) small');
+            dueDateSmall.className = 'd-block text-success';
+            dueDateSmall.textContent = 'Completed on time';
+            
+            // Update action buttons
+            const actionBtns = row.querySelector('.btn-group');
+            actionBtns.innerHTML = `
+                <button class="btn btn-sm btn-outline-primary" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-success" title="View Details">
+                    <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" title="Delete">
+                    <i class="bi bi-trash"></i>
+                </button>
+            `;
+            
+            updateStatistics();
+            console.log('Task marked as completed!');
+        }
+    }
+    
+    // Function to edit task from view modal
+    window.editTaskFromView = function() {
+        bootstrap.Modal.getInstance(document.getElementById('viewTaskModal')).hide();
+        setTimeout(() => {
+            // Find the current task row (this would need to be improved with proper task identification)
+            const rows = document.querySelectorAll('#taskTable tr');
+            if (rows.length > 0) {
+                editTask(rows[0]); // For demo - would need proper task identification
+            }
+        }, 300);
+    };
+    
+    // Handle Edit Task Form Submission
+    const editTaskForm = document.getElementById('editTaskForm');
+    if (editTaskForm) {
+        editTaskForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const taskIndex = document.getElementById('editTaskIndex').value;
+            const row = document.querySelectorAll('#taskTable tr')[taskIndex];
+            
+            if (!row) return;
+            
+            // Get form values
+            const taskName = document.getElementById('editTaskName').value;
+            const taskDescription = document.getElementById('editTaskDescription').value;
+            const taskSubject = document.getElementById('editTaskSubject').value;
+            const taskPriority = document.getElementById('editTaskPriority').value;
+            const taskStatus = document.getElementById('editTaskStatus').value;
+            const taskDue = document.getElementById('editTaskDue').value;
+            
+            // Create priority badge
+            const priorityClass = taskPriority === 'high' ? 'priority-high' : 
+                                taskPriority === 'medium' ? 'priority-medium' : 'priority-low';
+            const priorityIcon = taskPriority === 'high' ? 'bi-arrow-up' : 
+                               taskPriority === 'medium' ? 'bi-dash' : 'bi-arrow-down';
+            
+            // Create status badge
+            const statusClass = taskStatus === 'completed' ? 'bg-success' : 
+                              taskStatus === 'in-progress' ? 'bg-info' : 'bg-warning text-dark';
+            const statusText = taskStatus.charAt(0).toUpperCase() + taskStatus.slice(1).replace('-', ' ');
+            
+            // Create task icon
+            const taskIcon = taskStatus === 'completed' ? 'bi-check-circle' : 
+                           taskStatus === 'in-progress' ? 'bi-arrow-clockwise' : 'bi-clock';
+            const taskIconBg = taskStatus === 'completed' ? 'bg-success' : 
+                             taskStatus === 'in-progress' ? 'bg-info' : 'bg-warning';
+            
+            // Create subject badge color
+            const subjectColors = ['bg-primary', 'bg-info', 'bg-secondary', 'bg-success', 'bg-warning'];
+            const subjectColor = subjectColors[Math.floor(Math.random() * subjectColors.length)];
+            
+            // Format due date
+            const dueDate = new Date(taskDue);
+            const today = new Date();
+            const diffTime = dueDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            let dueDateStatus = '';
+            if (taskStatus === 'completed') {
+                dueDateStatus = '<small class="d-block text-success">Completed on time</small>';
+            } else if (diffDays < 0) {
+                dueDateStatus = `<small class="d-block text-danger">${Math.abs(diffDays)} days overdue</small>`;
+                row.setAttribute('data-status', 'overdue');
+            } else if (diffDays <= 2) {
+                dueDateStatus = `<small class="d-block text-warning">Due in ${diffDays} days</small>`;
+            } else {
+                dueDateStatus = `<small class="d-block text-muted">Due in ${diffDays} days</small>`;
+            }
+            
+            // Update row
+            row.setAttribute('data-status', diffDays < 0 && taskStatus !== 'completed' ? 'overdue' : taskStatus);
+
+            row.innerHTML = `
+                <td>
+                    <div class="d-flex align-items-center">
+                        <div class="task-icon ${taskIconBg} me-3">
+                            <i class="bi ${taskIcon}"></i>
+                        </div>
+                        <div>
+                            <h6 class="mb-1 task-title">${taskName}</h6>
+                            <small class="text-muted">${taskDescription || 'No description provided'}</small>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    <span class="subject-badge ${subjectColor}">${taskSubject}</span>
+                </td>
+                <td>
+                    <span class="priority-badge ${priorityClass}">
+                        <i class="bi ${priorityIcon}"></i> ${taskPriority.charAt(0).toUpperCase() + taskPriority.slice(1)}
+                    </span>
+                </td>
+                <td><span class="badge ${statusClass}">${statusText}</span></td>
+                <td>
+                    <div>
+                        <strong>${dueDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</strong>
+                        ${dueDateStatus}
+                    </div>
+                </td>
+                <td>
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-outline-primary" title="Edit">
+                            <i class="bi bi-pencil"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" title="${taskStatus === 'completed' ? 'View Details' : 'Mark Complete'}">
+                            <i class="bi ${taskStatus === 'completed' ? 'bi-eye' : 'bi-check'}"></i>
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+
+            // Update localStorage with edited task
+            let tasks = JSON.parse(localStorage.getItem('tasksData')) || [];
+            // Find the original task by index
+            if (typeof taskIndex !== 'undefined' && tasks[taskIndex]) {
+                tasks[taskIndex] = {
+                    name: taskName,
+                    description: taskDescription,
+                    subject: taskSubject,
+                    priority: taskPriority,
+                    status: row.getAttribute('data-status'),
+                    due: dueDate.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})
+                };
+                localStorage.setItem('tasksData', JSON.stringify(tasks));
+            }
+
+            // Hide modal and update statistics
+            bootstrap.Modal.getInstance(document.getElementById('editTaskModal')).hide();
+            updateStatistics();
+            console.log('Task updated successfully!');
+        });
+    }
+}

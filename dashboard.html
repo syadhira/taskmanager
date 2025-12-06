@@ -3,145 +3,551 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Student Task Manager - Dashboard</title>
+<title>EduTask Manager - Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <link rel="stylesheet" href="css/style.css">
 </head>
-<body>
+<body data-page="dashboard" class="dashboard-body">
 
-
+<div class="app-container d-flex">
+  
 
   <!-- Sidebar -->
-  <nav class="sidebar bg-purple p-3">
-    <h4 class="text-white fw-bold mb-4">Task Manager</h4>
-    <ul class="nav flex-column">
-      <li class="nav-item mb-2"><a href="dashboard.html" class="nav-link active"><i class="bi bi-display me-2"></i> Dashboard</a></li>
-      <li class="nav-item mb-2"><a href="tasks.html" class="nav-link"><i class="bi bi-list-check me-2"></i> Tasks</a></li>
-      <li class="nav-item mb-2"><a href="subjects.html" class="nav-link"><i class="bi bi-bookmarks me-2"></i> Subjects</a></li>
-      <li class="nav-item mb-2"><a href="profile.html" class="nav-link"><i class="bi bi-person-badge me-2"></i> Profile</a></li>
-      <li class="nav-item mb-2"><a href="index.html" class="nav-link"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
-    </ul>
-  </nav>
-
-  <!-- Main Content + Right Column -->
-  <div class="flex-grow-1 ms-3">
-    
-    <!-- TOP NAVBAR -->
-<nav class="top-navbar d-flex align-items-center justify-content-between px-4 py-2" style="background-color: #f692f1;">
-    <h4 class="m-0 fw-bold">Task Manager</h4>
-
-    <div class="d-flex align-items-center gap-3">
-        <!-- Search -->
-        <input type="text" class="form-control search-bar" placeholder="Search tasks..." style="max-width: 200px;">
-
-        <!-- Profile (clickable) -->
-        <a href="profile.html">
-            <img src="pic/profileid.png" class="profile-icon rounded-circle" width="35" alt="Profile">
-        </a>
-
-        <!-- Logout -->
-        <a href="index.html" class="btn btn-outline-dark btn-sm">Logout</a>
+  <div class="offcanvas offcanvas-start d-lg-block sidebar-wrapper" tabindex="-1" id="sidebarOffcanvas">
+    <div class="offcanvas-header d-lg-none">
+      <h5 class="offcanvas-title text-white">Menu</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
     </div>
-</nav>
-<!-- Content -->
-<div class="content-wrapper">
-  <nav aria-label="breadcrumb">
-    <ol class="breadcrumb" id="breadcrumb">
-      <li class="breadcrumb-item active">Dashboard</li>
-    </ol>
-  </nav>
-  <div class="container-fluid mt-4">
-    <div class="row">
+    <nav class="sidebar bg-gradient-purple p-3 h-100">
+      <div class="sidebar-brand mb-4">
+        <h4 class="text-white fw-bold mb-0">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Task Manager
+        </h4>
+      </div>
+      <ul class="nav flex-column sidebar-nav">
+        <li class="nav-item mb-2">
+          <a href="dashboard.html" class="nav-link active">
+            <i class="bi bi-speedometer2 me-2"></i> 
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="tasks.html" class="nav-link">
+            <i class="bi bi-list-check me-2"></i> 
+            <span>Tasks</span>
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="subjects.html" class="nav-link">
+            <i class="bi bi-bookmarks me-2"></i> 
+            <span>Subjects</span>
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="profile.html" class="nav-link">
+            <i class="bi bi-person-badge me-2"></i> 
+            <span>Profile</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer mt-auto pt-3">
+        <a href="index.html" class="nav-link logout-link">
+          <i class="bi bi-box-arrow-right me-2"></i> 
+          <span>Logout</span>
+        </a>
+      </div>
+    </nav>
+  </div>
 
-        <!-- Main Left Column -->
-        <div class="col-lg-8">
+  <!-- Main Content Area -->
+  <div class="main-content flex-grow-1">
+    <!-- TOP NAVBAR -->
+    <header class="top-navbar navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <button class="btn d-lg-none me-2 mobile-sidebar-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
+            <i class="bi bi-list"></i>
+          </button>
+          <h4 class="navbar-brand mb-0">
+            <i class="bi bi-speedometer2 me-2 text-primary"></i>
+            Dashboard
+          </h4>
+        </div>
 
-          <!-- Main Topic -->
-          <div class="main-section mb-4 p-3 rounded shadow-sm">
-            <div class="row align-items-center">
-              <div class="col-md-4 text-center">
-                <img src="tasks.jpeg" class="main-img rounded" alt="Main Topic">
-              </div>
-              <div class="col-md-8">
-                <h3 class="fw-bold">Main Topic Title</h3>
-                <p>This is the description area. Image on left, text on right. Add more details here.</p>
-              </div>
+        <!-- Navbar Center - Navigation Links -->
+        <div class="navbar-nav d-flex flex-row align-items-center gap-2 d-none d-lg-flex">
+          <div class="nav-item">
+            <a class="nav-link" href="dashboard.html">
+              <i class="bi bi-house me-1"></i>
+              <span class="d-none d-xl-inline">Home</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link" href="tasks.html">
+              <i class="bi bi-list-check me-1"></i>
+              <span class="d-none d-xl-inline">Tasks</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link" href="subjects.html">
+              <i class="bi bi-bookmarks me-1"></i>
+              <span class="d-none d-xl-inline">Subjects</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Navbar Right - User Actions -->
+        <div class="navbar-nav d-flex flex-row align-items-center gap-2">
+          <!-- Search -->
+
+
+          <!-- Notifications -->
+          <div class="nav-item">
+            <div class="dropdown">
+              <button class="btn btn-link position-relative notification-btn" type="button" data-bs-toggle="dropdown">
+                <i class="bi bi-bell"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                  3
+                </span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" style="width: 320px;">
+                <li class="dropdown-header d-flex justify-content-between align-items-center">
+                  <span class="fw-bold">Notifications</span>
+                  <button class="btn btn-sm btn-link text-primary p-0">Mark all read</button>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li>
+                  <a class="dropdown-item py-3" href="#">
+                    <div class="d-flex">
+                      <div class="flex-shrink-0 me-3">
+                        <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                          <i class="bi bi-clock text-white"></i>
+                        </div>
+                      </div>
+                      <div class="flex-grow-1">
+                        <strong>Assignment Due Soon</strong>
+                        <div class="text-muted small">Web Design project due in 2 hours</div>
+                        <div class="text-muted small">2 minutes ago</div>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item py-3" href="#">
+                    <div class="d-flex">
+                      <div class="flex-shrink-0 me-3">
+                        <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                          <i class="bi bi-check text-white"></i>
+                        </div>
+                      </div>
+                      <div class="flex-grow-1">
+                        <strong>Task Completed</strong>
+                        <div class="text-muted small">Research paper submitted successfully</div>
+                        <div class="text-muted small">1 hour ago</div>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li>
+                  <a class="dropdown-item py-3" href="#">
+                    <div class="d-flex">
+                      <div class="flex-shrink-0 me-3">
+                        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                          <i class="bi bi-calendar text-white"></i>
+                        </div>
+                      </div>
+                      <div class="flex-grow-1">
+                        <strong>New Class Schedule</strong>
+                        <div class="text-muted small">LCC501 moved to Room A102</div>
+                        <div class="text-muted small">3 hours ago</div>
+                      </div>
+                    </div>
+                  </a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-center text-primary" href="#">View all notifications</a></li>
+              </ul>
             </div>
           </div>
 
-          <!-- Summary Cards -->
+          <!-- Profile Dropdown -->
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+              <img src="pic/profileid.png" class="profile-avatar rounded-circle me-2" alt="Profile">
+              <div class="d-none d-md-block text-start">
+                <div class="fw-bold" style="font-size: 0.9rem; line-height: 1.2;">Aisyah N.</div>
+                <div class="text-muted" style="font-size: 0.75rem; line-height: 1;">Student</div>
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li class="dropdown-header">
+                <div class="d-flex align-items-center">
+                  <img src="pic/profileid.png" class="rounded-circle me-2" width="40" height="40" alt="Profile">
+                  <div>
+                    <div class="fw-bold">Aisyah Nadhirah</div>
+                    <div class="text-muted small">2025180137</div>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>My Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="index.html"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="content-wrapper p-3 p-lg-4">
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb custom-breadcrumb" id="breadcrumb">
+          <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+      </nav>
+
+      <!-- Welcome Section -->
+      <div class="welcome-section mb-4">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h1 class="display-6 fw-bold mb-2" style="color: var(--primary-color);">Welcome back to EduTask Manager!</h1>
+            <p class="lead mb-3" style="color: var(--text-secondary);">Here's what's happening with your studies today</p>
+          </div>
+          <div class="col-md-4 text-center">
+            <div class="welcome-illustration">
+              <img src="tasks.jpeg" class="img-fluid rounded-3 shadow-lg" alt="Study Illustration" style="max-height: 200px;">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <!-- Main Content Column -->
+        <div class="col-xl-8 col-lg-7 mb-4">
+          <!-- Stats Cards -->
           <div class="row g-3 mb-4">
-            <div class="col-md-4">
-              <div class="dash-card">
-                <h5>Total Tasks</h5>
-                <h2>24</h2>
+            <div class="col-lg-4 col-md-6">
+              <div class="stats-card stats-primary">
+                <div class="stats-icon">
+                  <i class="bi bi-list-task"></i>
+                </div>
+                <div class="stats-content">
+                  <h3 class="stats-number">24</h3>
+                  <p class="stats-label">Total Tasks</p>
+                  <small class="stats-change text-success">
+                    <i class="bi bi-arrow-up"></i> +12% from last week
+                  </small>
+                </div>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="dash-card purple">
-                <h5>Completed</h5>
-                <h2>15</h2>
+            <div class="col-lg-4 col-md-6">
+              <div class="stats-card stats-success">
+                <div class="stats-icon">
+                  <i class="bi bi-check-circle"></i>
+                </div>
+                <div class="stats-content">
+                  <h3 class="stats-number">15</h3>
+                  <p class="stats-label">Completed</p>
+                  <small class="stats-change text-success">
+                    <i class="bi bi-arrow-up"></i> +8% completion rate
+                  </small>
+                </div>
               </div>
             </div>
-            <div class="col-md-4">
-              <div class="dash-card orange">
-                <h5>Pending</h5>
-                <h2>9</h2>
+            <div class="col-lg-4 col-md-6">
+              <div class="stats-card stats-warning">
+                <div class="stats-icon">
+                  <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div class="stats-content">
+                  <h3 class="stats-number">9</h3>
+                  <p class="stats-label">Pending</p>
+                  <small class="stats-change text-warning">
+                    <i class="bi bi-clock"></i> 3 due today
+                  </small>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Charts -->
-          <div class="row g-3">
-            <div class="col-md-6">
-              <div class="chart-box p-3 rounded shadow-sm">
-                <h5 class="fw-bold mb-3">Task Completion Chart</h5>
-                <canvas id="taskChart"></canvas>
+          <!-- Charts Section -->
+          <div class="row g-4">
+            <div class="col-lg-6">
+              <div class="chart-container">
+                <div class="chart-header">
+                  <h5 class="chart-title">
+                    <i class="bi bi-pie-chart me-2"></i>
+                    Task Completion Overview
+                  </h5>
+                  <div class="chart-controls">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">
+                      This Week
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li><a class="dropdown-item" href="#">This Week</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+                </div>
+                <div class="chart-body">
+                  <canvas id="taskChart" height="300"></canvas>
+                </div>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="chart-box p-3 rounded shadow-sm">
-                <h5 class="fw-bold mb-3">Weekly Study Hours</h5>
-                <canvas id="studyChart"></canvas>
+            <div class="col-lg-6">
+              <div class="chart-container">
+                <div class="chart-header">
+                  <h5 class="chart-title">
+                    <i class="bi bi-bar-chart me-2"></i>
+                    Weekly Study Hours
+                  </h5>
+                  <div class="chart-controls">
+                    <button class="btn btn-sm btn-outline-secondary">
+                      <i class="bi bi-arrow-clockwise"></i>
+                    </button>
+                  </div>
+                </div>
+                <div class="chart-body">
+                  <canvas id="studyChart" height="300"></canvas>
+                </div>
               </div>
             </div>
           </div>
 
+          <!-- Recent Activity -->
+          <div class="recent-activity mt-4">
+            <div class="card">
+              <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                  <i class="bi bi-activity me-2"></i>
+                  Recent Activity
+                </h5>
+                <a href="tasks.html" class="btn btn-sm btn-outline-primary">View All</a>
+              </div>
+              <div class="card-body p-0">
+                <div class="activity-list">
+                  <div class="activity-item">
+                    <div class="activity-icon bg-success">
+                      <i class="bi bi-check-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                      <p class="activity-text mb-1" style="color: var(--text-primary);">Completed "Research Methodology Assignment"</p>
+                      <small class="text-muted" style="color: var(--text-secondary);">2 hours ago</small>
+                    </div>
+                  </div>
+                  <div class="activity-item">
+                    <div class="activity-icon bg-warning">
+                      <i class="bi bi-clock"></i>
+                    </div>
+                    <div class="activity-content">
+                      <p class="activity-text mb-1" style="color: var(--text-primary);">Deadline reminder: "Database Project" due tomorrow</p>
+                      <small class="text-muted" style="color: var(--text-secondary);">4 hours ago</small>
+                    </div>
+                  </div>
+                  <div class="activity-item">
+                    <div class="activity-icon bg-primary">
+                      <i class="bi bi-plus-circle"></i>
+                    </div>
+                    <div class="activity-content">
+                      <p class="activity-text mb-1" style="color: var(--text-primary);">Added new task "Study for Midterm Exam"</p>
+                      <small class="text-muted" style="color: var(--text-secondary);">1 day ago</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <!-- Right Small Column -->
-        <div class="col-lg-4 mt-4 mt-lg-0">
-          <div class="side-info-box p-3 rounded shadow-sm">
-            <h6 class="fw-bold text-center mb-3">Achievements</h6>
-            <div class="info-box mb-2">
-              <i class="bi bi-trophy-fill"></i>
-              <p>Completed 15 Tasks</p>
+        <!-- Sidebar Column -->
+        <div class="col-xl-4 col-lg-5">
+          <!-- Achievements Card -->
+          <div class="sidebar-card achievements-card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">
+                <i class="bi bi-trophy me-2"></i>
+                Achievements
+              </h5>
             </div>
-            <div class="info-box mb-3">
-              <i class="bi bi-lightning-charge-fill"></i>
-              <p>Weekly Streak: 5 Days</p>
+            <div class="card-body">
+              <div class="achievement-item">
+                <div class="achievement-icon bg-gradient-success">
+                  <i class="bi bi-check-all"></i>
+                </div>
+                <div class="achievement-content">
+                  <h6 class="mb-1">Task Master</h6>
+                  <p class="mb-0 text-muted">Completed 15 tasks this week</p>
+                </div>
+                <div class="achievement-progress">
+                  <div class="progress">
+                    <div class="progress-bar bg-success" style="width: 75%"></div>
+                  </div>
+                  <small class="text-muted">1/4</small>
+                </div>
+              </div>
+              
+              <div class="achievement-item">
+                <div class="achievement-icon bg-gradient-warning">
+                  <i class="bi bi-lightning"></i>
+                </div>
+                <div class="achievement-content">
+                  <h6 class="mb-1">Study Streak</h6>
+                  <p class="mb-0 text-muted">5 days in a row</p>
+                </div>
+                <div class="achievement-progress">
+                  <div class="progress">
+                    <div class="progress-bar bg-warning" style="width: 50%"></div>
+                  </div>
+                  <small class="text-muted">5/10</small>
+                </div>
+              </div>
             </div>
-            <h6 class="fw-bold text-center mt-4 mb-3">Library Access</h6>
-            <div class="info-box mb-2">
-              <i class="bi bi-book-half"></i>
-              <p><a href="https://library.uitm.edu.my/" target="_blank" rel="noopener noreferrer">UiTM Library Portal</a></p>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="sidebar-card quick-actions-card mb-4">
+            <div class="card-header">
+              <h5 class="mb-0">
+                <i class="bi bi-lightning-charge me-2"></i>
+                Quick Actions
+              </h5>
             </div>
-            <div class="info-box mb-2">
-              <i class="bi bi-journal-text"></i>
-             <p><a href="https://ptar.uitm.edu.my/pddt/subjects/databases.php?letter=bytype&type=E%2dJournal" target="_blank" rel="noopener noreferrer">E-Journal Access</a></p>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <a href="tasks.html" class="btn btn-primary">
+                  <i class="bi bi-plus-circle me-2"></i>Add New Task
+                </a>
+                <a href="subjects.html" class="btn btn-outline-secondary">
+                  <i class="bi bi-book me-2"></i>Manage Subjects
+                </a>
+                <button class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+                  <i class="bi bi-calendar-plus me-2"></i>Schedule Study Time
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resource Links -->
+          <div class="sidebar-card resources-card">
+            <div class="card-header">
+              <h5 class="mb-0">
+                <i class="bi bi-collection me-2"></i>
+                Academic Resources
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="resource-list">
+                <a href="https://library.uitm.edu.my/" target="_blank" class="resource-item">
+                  <div class="resource-icon">
+                    <i class="bi bi-building"></i>
+                  </div>
+                  <div class="resource-content">
+                    <h6 class="mb-1">UiTM Library</h6>
+                    <small class="text-muted">Online catalog & resources</small>
+                  </div>
+                  <i class="bi bi-box-arrow-up-right resource-external"></i>
+                </a>
+                
+                <a href="https://ptar.uitm.edu.my/pddt/subjects/databases.php?letter=bytype&type=E%2dJournal" target="_blank" class="resource-item">
+                  <div class="resource-icon">
+                    <i class="bi bi-journal-text"></i>
+                  </div>
+                  <div class="resource-content">
+                    <h6 class="mb-1">E-Journal Access</h6>
+                    <small class="text-muted">Research papers & journals</small>
+                  </div>
+                  <i class="bi bi-box-arrow-up-right resource-external"></i>
+                </a>
+                
+                <a href="#" class="resource-item">
+                  <div class="resource-icon">
+                    <i class="bi bi-mortarboard"></i>
+                  </div>
+                  <div class="resource-content">
+                    <h6 class="mb-1">Study Guides</h6>
+                    <small class="text-muted">Subject-specific guides</small>
+                  </div>
+                  <i class="bi bi-chevron-right resource-arrow"></i>
+                </a>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+    </main>
+  </div>
+</div>
 
+<!-- Schedule Modal -->
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="scheduleModalLabel">
+          <i class="bi bi-calendar-plus me-2"></i>
+          Schedule Study Time
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="scheduleForm">
+          <div class="mb-3">
+            <label for="studySubject" class="form-label">Subject</label>
+            <select class="form-select" id="studySubject" required>
+              <option value="">Choose subject...</option>
+              <option value="mathematics">Mathematics</option>
+              <option value="physics">Physics</option>
+              <option value="chemistry">Chemistry</option>
+              <option value="computer-science">Computer Science</option>
+              <option value="english">English</option>
+            </select>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <label for="studyDate" class="form-label">Date</label>
+              <input type="date" class="form-control" id="studyDate" required>
+            </div>
+            <div class="col-md-6">
+              <label for="studyTime" class="form-label">Time</label>
+              <input type="time" class="form-control" id="studyTime" required>
+            </div>
+          </div>
+          <div class="mb-3 mt-3">
+            <label for="studyDuration" class="form-label">Duration (hours)</label>
+            <select class="form-select" id="studyDuration" required>
+              <option value="">Select duration...</option>
+              <option value="0.5">30 minutes</option>
+              <option value="1">1 hour</option>
+              <option value="1.5">1.5 hours</option>
+              <option value="2">2 hours</option>
+              <option value="3">3 hours</option>
+              <option value="4">4 hours</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="studyNotes" class="form-label">Notes (Optional)</label>
+            <textarea class="form-control" id="studyNotes" rows="3" placeholder="Study goals, topics to cover, etc."></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="scheduleForm" class="btn btn-primary">
+          <i class="bi bi-check-circle me-1"></i>
+          Schedule Session
+        </button>
       </div>
     </div>
-
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="js/app.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

@@ -3,134 +3,688 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Task Manager - Profile</title>
-  <!-- Bootstrap 5 CSS -->
+  <title>EduTask Manager - Profile</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
- <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Custom CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-light-pastel" data-page="profile">
-<!-- Sidebar -->
-  <nav class="sidebar bg-purple p-3">
-    <h4 class="text-white fw-bold mb-4">Task Manager</h4>
-    <ul class="nav flex-column">
-      <li class="nav-item mb-2"><a href="dashboard.html" class="nav-link"><i class="bi bi-display me-2"></i> Dashboard</a></li>
-      <li class="nav-item mb-2"><a href="tasks.html" class="nav-link"><i class="bi bi-list-check me-2"></i> Tasks</a></li>
-      <li class="nav-item mb-2"><a href="subjects.html" class="nav-link"><i class="bi bi-bookmarks me-2"></i> Subjects</a></li>
-      <li class="nav-item mb-2"><a href="profile.html" class="nav-link active"><i class="bi bi-person-badge me-2"></i> Profile</a></li>
-      <li class="nav-item mb-2"><a href="index.html" class="nav-link"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
-    </ul>
-  </nav>
+<body data-page="profile" class="dashboard-body">
 
-  <!-- Main Content + Right Column -->
-  <div class="flex-grow-1 ms-3">
-    
-   <!-- TOP NAVBAR -->
-<nav class="top-navbar d-flex align-items-center justify-content-between px-4 py-2" style="background-color: #f692f1;">
-    <h4 class="m-0 fw-bold">Task Manager</h4>
+<div class="app-container d-flex">
 
-    <div class="d-flex align-items-center gap-3">
-        <!-- Search -->
-        <input type="text" class="form-control search-bar" placeholder="Search tasks..." style="max-width: 200px;">
-
-        <!-- Profile (clickable) -->
-        <a href="profile.html">
-            <img src="pic/profileid.png" class="profile-icon rounded-circle" width="35" alt="Profile">
+  <!-- Sidebar -->
+  <div class="offcanvas offcanvas-start d-lg-block sidebar-wrapper" tabindex="-1" id="sidebarOffcanvas">
+    <div class="offcanvas-header d-lg-none">
+      <h5 class="offcanvas-title text-white">Menu</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <nav class="sidebar bg-gradient-purple p-3 h-100">
+      <div class="sidebar-brand mb-4">
+        <h4 class="text-white fw-bold mb-0">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Task Manager
+        </h4>
+      </div>
+      <ul class="nav flex-column sidebar-nav">
+        <li class="nav-item mb-2">
+          <a href="dashboard.html" class="nav-link">
+            <i class="bi bi-speedometer2 me-2"></i> 
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="tasks.html" class="nav-link">
+            <i class="bi bi-list-check me-2"></i> 
+            <span>Tasks</span>
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="subjects.html" class="nav-link">
+            <i class="bi bi-bookmarks me-2"></i> 
+            <span>Subjects</span>
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="profile.html" class="nav-link active">
+            <i class="bi bi-person-badge me-2"></i> 
+            <span>Profile</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer mt-auto pt-3">
+        <a href="index.html" class="nav-link logout-link">
+          <i class="bi bi-box-arrow-right me-2"></i> 
+          <span>Logout</span>
         </a>
+      </div>
+    </nav>
+  </div>
 
-        <!-- Logout -->
-        <a href="index.html" class="btn btn-outline-dark btn-sm">Logout</a>
-    </div>
-</nav>
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb" id="breadcrumb">
-    <!-- JS akan populate breadcrumb di sini -->
-  </ol>
-</nav>
-<!-- Profile Content -->
-<div class="container my-5">
-  <h2 class="mb-4 text-dark">My Profile</h2>
-
-  <div class="row g-4">
-
-    <!-- Column 1: Image + Description + Edit Button -->
-    <div class="col-md-4 text-center position-relative">
-      <div class="card p-3 shadow-sm profile-card">
-        <div class="profile-img-wrapper">
-          <img src="pic/profileid.png" class="rounded-circle profile-img" width="120" alt="Profile">
+  <!-- Main Content Area -->
+  <div class="main-content flex-grow-1">
+    <!-- TOP NAVBAR -->
+    <header class="top-navbar navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <button class="btn d-lg-none me-2 mobile-sidebar-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
+            <i class="bi bi-list"></i>
+          </button>
+          <h4 class="navbar-brand mb-0">
+            <i class="bi bi-person-badge me-2 text-primary"></i>
+            Profile
+          </h4>
         </div>
-        <h5 class="fw-bold mt-5">Aisyah Nadhirah | 2025180137</h5>
-        <p class="text-muted">
-  SARJANA MUDA SAINS MAKLUMAT (KEPUJIAN) PENGURUSAN SISTEM MAKLUMAT <br>
-  College of Computing, Informatics and Mathematics <br>
-  UiTM Puncak Perdana
-</p>
 
-        <button class="btn btn-pastel profile-btn" data-bs-toggle="modal" data-bs-target="#editProfileModal">Edit Profile</button>
+        <!-- Navbar Center - Navigation Links -->
+        <div class="navbar-nav d-flex flex-row align-items-center gap-2 d-none d-lg-flex">
+          <div class="nav-item">
+            <a class="nav-link" href="dashboard.html">
+              <i class="bi bi-house me-1"></i>
+              <span class="d-none d-xl-inline">Home</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link" href="tasks.html">
+              <i class="bi bi-list-check me-1"></i>
+              <span class="d-none d-xl-inline">Tasks</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link" href="subjects.html">
+              <i class="bi bi-bookmarks me-1"></i>
+              <span class="d-none d-xl-inline">Subjects</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Navbar Right - User Actions -->
+        <div class="navbar-nav d-flex flex-row align-items-center gap-2">
+
+          <!-- Notifications -->
+          <div class="nav-item dropdown">
+            <button class="btn btn-link position-relative notification-btn" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-bell"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">3</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" style="width: 320px;">
+              <li class="dropdown-header d-flex justify-content-between align-items-center">
+                <span class="fw-bold">Notifications</span>
+                <button class="btn btn-sm btn-link text-primary p-0">Mark all read</button>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item py-3" href="#">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                      <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-clock text-white"></i>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1">
+                      <strong>Assignment Due Soon</strong>
+                      <div class="text-muted small">Web Design project due in 2 hours</div>
+                      <div class="text-muted small">2 minutes ago</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-3" href="#">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                      <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-check text-white"></i>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1">
+                      <strong>Task Completed</strong>
+                      <div class="text-muted small">Research paper submitted successfully</div>
+                      <div class="text-muted small">1 hour ago</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-3" href="#">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                      <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-calendar text-white"></i>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1">
+                      <strong>New Class Schedule</strong>
+                      <div class="text-muted small">LCC501 moved to Room A102</div>
+                      <div class="text-muted small">3 hours ago</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-center text-primary" href="#">View all notifications</a></li>
+            </ul>
+          </div>
+          <!-- Profile Dropdown -->
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+              <img src="pic/profileid.png" class="profile-avatar rounded-circle me-2" alt="Profile">
+              <div class="d-none d-md-block text-start">
+                <div class="fw-bold" style="font-size: 0.9rem; line-height: 1.2;">Aisyah N.</div>
+                <div class="text-muted" style="font-size: 0.75rem; line-height: 1;">Student</div>
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li class="dropdown-header">
+                <div class="d-flex align-items-center">
+                  <img src="pic/profileid.png" class="rounded-circle me-2" width="40" height="40" alt="Profile">
+                  <div>
+                    <div class="fw-bold">Aisyah Nadhirah</div>
+                    <div class="text-muted small">2025180137</div>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>My Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="index.html"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+            </ul>
+          </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="content-wrapper p-3 p-lg-4">
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb custom-breadcrumb" id="breadcrumb">
+          <!-- JS will populate breadcrumb here -->
+        </ol>
+      </nav>
+
+      <!-- Profile Header -->
+      <div class="profile-header mb-5">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h1 class="display-6 fw-bold text-gradient mb-2">Student Profile</h1>
+            <p class="lead text-muted mb-3">Manage your personal information and academic details</p>
+          </div>
+          <div class="col-md-4 text-end">
+            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#editProfileModal">
+              <i class="bi bi-pencil me-2"></i>Edit Profile
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4">
+        <!-- Profile Card with Photo -->
+        <div class="col-xl-4 col-lg-5">
+          <div class="profile-main-card text-center">
+            <div class="profile-cover" style="height: 120px; background: var(--gradient-primary); border-top-left-radius: 20px; border-top-right-radius: 20px;"></div>
+            <div class="profile-photo-wrapper d-flex flex-column align-items-center justify-content-center" style="margin-top: -60px; margin-bottom: 16px; position: relative; z-index:2;">
+              <img src="pic/profileid.png" class="profile-photo shadow" alt="Profile Photo" style="width: 120px; height: 120px; border: 5px solid #fff; object-fit: cover; background: #fff;">
+              <button class="btn btn-sm btn-primary photo-edit-btn d-flex align-items-center justify-content-center" title="Change Photo" style="position: absolute; right: 8px; bottom: 8px;">
+                <i class="bi bi-camera"></i>
+              </button>
+            </div>
+            
+            <div class="profile-info">
+              <h4 class="profile-name" id="displayName">Aisyah Nadhirah Binti Ahamad Khairi</h4>
+              <p class="profile-id text-muted mb-3">Student ID: <span id="displayStudentID">2025180137</span></p>
+              
+              <div class="profile-badges mb-3">
+                <span class="badge bg-primary me-2"><i class="bi bi-mortarboard me-1"></i>Active Student</span>
+                <span class="badge bg-success"><i class="bi bi-award me-1"></i>Dean's List</span>
+              </div>
+              
+              <div class="profile-stats">
+                <div class="row text-center">
+                  <div class="col-4">
+                    <div class="stat-item">
+                      <h5 class="stat-number text-primary">4.2</h5>
+                      <small class="stat-label">CGPA</small>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="stat-item">
+                      <h5 class="stat-number text-success">5</h5>
+                      <small class="stat-label">Subjects</small>
+                    </div>
+                  </div>
+                  <div class="col-4">
+                    <div class="stat-item">
+                      <h5 class="stat-number text-info">3</h5>
+                      <small class="stat-label">Year</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Actions -->
+          <div class="sidebar-card mt-4">
+            <div class="card-header">
+              <h5 class="mb-0">
+                <i class="bi bi-lightning-charge me-2"></i>
+                Quick Actions
+              </h5>
+            </div>
+            <div class="card-body">
+              <div class="d-grid gap-2">
+                <button class="btn btn-outline-primary">
+                  <i class="bi bi-download me-2"></i>Download Transcript
+                </button>
+                <button class="btn btn-outline-secondary">
+                  <i class="bi bi-printer me-2"></i>Print ID Card
+                </button>
+                <button class="btn btn-outline-info">
+                  <i class="bi bi-shield-check me-2"></i>Privacy Settings
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profile Details -->
+        <div class="col-xl-8 col-lg-7">
+          <!-- Personal Information -->
+          <div class="profile-section mb-4">
+            <div class="section-header">
+              <h5>
+                <i class="bi bi-person me-2"></i>
+                Personal Information
+              </h5>
+            </div>
+            <div class="section-content">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Full Name</label>
+                    <p class="info-value" id="studentName">Aisyah Nadhirah Binti Ahamad Khairi</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Student ID</label>
+                    <p class="info-value" id="studentID">2025180137</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Email Address</label>
+                    <p class="info-value" id="studentEmail">
+                      <a href="mailto:2025180137@student.uitm.edu.my">2025180137@student.uitm.edu.my</a>
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Mobile Number</label>
+                    <p class="info-value" id="studentNumber">
+                      <a href="tel:0178990494">017-899-0494</a>
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Date of Birth</label>
+                    <p class="info-value">March 15, 2003</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Gender</label>
+                    <p class="info-value">Female</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Academic Information -->
+          <div class="profile-section mb-4">
+            <div class="section-header">
+              <h5>
+                <i class="bi bi-mortarboard me-2"></i>
+                Academic Information
+              </h5>
+            </div>
+            <div class="section-content">
+              <div class="row g-4">
+                <div class="col-md-12">
+                  <div class="info-item">
+                    <label class="info-label">Program</label>
+                    <p class="info-value" id="studentProgram">
+                      Bachelor of Information Science (Hons) Information Systems Management
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Faculty</label>
+                    <p class="info-value">College of Computing, Informatics and Mathematics</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Campus</label>
+                    <p class="info-value">UiTM Puncak Perdana</p>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="info-item">
+                    <label class="info-label">Current Semester</label>
+                    <p class="info-value">Semester 5</p>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="info-item">
+                    <label class="info-label">Year of Study</label>
+                    <p class="info-value">Year 3</p>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="info-item">
+                    <label class="info-label">Study Mode</label>
+                    <p class="info-value">Full Time</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Admission Date</label>
+                    <p class="info-value">September 2022</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Expected Graduation</label>
+                    <p class="info-value">July 2026</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Academic Performance -->
+          <div class="profile-section mb-4">
+            <div class="section-header">
+              <h5>
+                <i class="bi bi-graph-up me-2"></i>
+                Academic Performance
+              </h5>
+            </div>
+            <div class="section-content">
+              <div class="row g-4">
+                <div class="col-md-3">
+                  <div class="performance-card text-center">
+                    <div class="performance-icon bg-primary">
+                      <i class="bi bi-award"></i>
+                    </div>
+                    <h4 class="mt-2 mb-1">4.2</h4>
+                    <small class="text-muted">Current CGPA</small>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="performance-card text-center">
+                    <div class="performance-icon bg-success">
+                      <i class="bi bi-book"></i>
+                    </div>
+                    <h4 class="mt-2 mb-1">85</h4>
+                    <small class="text-muted">Credit Hours</small>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="performance-card text-center">
+                    <div class="performance-icon bg-info">
+                      <i class="bi bi-trophy"></i>
+                    </div>
+                    <h4 class="mt-2 mb-1">3</h4>
+                    <small class="text-muted">Dean's List</small>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="performance-card text-center">
+                    <div class="performance-icon bg-warning">
+                      <i class="bi bi-star"></i>
+                    </div>
+                    <h4 class="mt-2 mb-1">2</h4>
+                    <small class="text-muted">Scholarships</small>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergency Contact -->
+          <div class="profile-section">
+            <div class="section-header">
+              <h5>
+                <i class="bi bi-telephone me-2"></i>
+                Emergency Contact
+              </h5>
+            </div>
+            <div class="section-content">
+              <div class="row g-4">
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Contact Name</label>
+                    <p class="info-value">Ahmad Khairi Bin Abdullah</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Relationship</label>
+                    <p class="info-value">Father</p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Phone Number</label>
+                    <p class="info-value">
+                      <a href="tel:0123456789">012-345-6789</a>
+                    </p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="info-item">
+                    <label class="info-label">Email</label>
+                    <p class="info-value">
+                      <a href="mailto:ahmad.khairi@email.com">ahmad.khairi@email.com</a>
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+
+<!-- Edit Profile Modal -->
+<div class="modal fade" id="editProfileModal" tabindex="-1" aria-labelledby="editProfileModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editProfileModalLabel">
+          <i class="bi bi-person-gear me-2"></i>
+          Edit Profile Information
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editProfileForm">
+          <!-- Personal Information Section -->
+          <div class="mb-4">
+            <h6 class="fw-bold text-primary border-bottom pb-2 mb-3">
+              <i class="bi bi-person me-2"></i>Personal Information
+            </h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="editName" class="form-label">Full Name</label>
+                <input type="text" class="form-control" id="editName" value="Aisyah Nadhirah Binti Ahamad Khairi" required>
+              </div>
+              <div class="col-md-6">
+                <label for="editStudentID" class="form-label">Student ID</label>
+                <input type="text" class="form-control" id="editStudentID" value="2025180137" readonly>
+              </div>
+              <div class="col-md-6">
+                <label for="editEmail" class="form-label">Email Address</label>
+                <input type="email" class="form-control" id="editEmail" value="2025180137@student.uitm.edu.my" required>
+              </div>
+              <div class="col-md-6">
+                <label for="editPhone" class="form-label">Mobile Number</label>
+                <input type="tel" class="form-control" id="editPhone" value="0178990494" required>
+              </div>
+              <div class="col-md-6">
+                <label for="editDOB" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="editDOB" value="2003-03-15">
+              </div>
+              <div class="col-md-6">
+                <label for="editGender" class="form-label">Gender</label>
+                <select class="form-select" id="editGender">
+                  <option value="female" selected>Female</option>
+                  <option value="male">Male</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Academic Information Section -->
+          <div class="mb-4">
+            <h6 class="fw-bold text-success border-bottom pb-2 mb-3">
+              <i class="bi bi-mortarboard me-2"></i>Academic Information
+            </h6>
+            <div class="row g-3">
+              <div class="col-md-12">
+                <label for="editProgram" class="form-label">Program</label>
+                <input type="text" class="form-control" id="editProgram" 
+                       value="Bachelor of Information Science (Hons) Information Systems Management" required>
+              </div>
+              <div class="col-md-6">
+                <label for="editFaculty" class="form-label">Faculty</label>
+                <input type="text" class="form-control" id="editFaculty" 
+                       value="College of Computing, Informatics and Mathematics">
+              </div>
+              <div class="col-md-6">
+                <label for="editCampus" class="form-label">Campus</label>
+                <select class="form-select" id="editCampus">
+                  <option value="puncak-perdana" selected>UiTM Puncak Perdana</option>
+                  <option value="shah-alam">UiTM Shah Alam</option>
+                  <option value="bangi">UiTM Bangi</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="editSemester" class="form-label">Current Semester</label>
+                <select class="form-select" id="editSemester">
+                  <option value="1">Semester 1</option>
+                  <option value="2">Semester 2</option>
+                  <option value="3">Semester 3</option>
+                  <option value="4">Semester 4</option>
+                  <option value="5" selected>Semester 5</option>
+                  <option value="6">Semester 6</option>
+                  <option value="7">Semester 7</option>
+                  <option value="8">Semester 8</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="editYear" class="form-label">Year of Study</label>
+                <select class="form-select" id="editYear">
+                  <option value="1">Year 1</option>
+                  <option value="2">Year 2</option>
+                  <option value="3" selected>Year 3</option>
+                  <option value="4">Year 4</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label for="editStudyMode" class="form-label">Study Mode</label>
+                <select class="form-select" id="editStudyMode">
+                  <option value="full-time" selected>Full Time</option>
+                  <option value="part-time">Part Time</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Emergency Contact Section -->
+          <div class="mb-4">
+            <h6 class="fw-bold text-warning border-bottom pb-2 mb-3">
+              <i class="bi bi-telephone me-2"></i>Emergency Contact
+            </h6>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="editEmergencyName" class="form-label">Contact Name</label>
+                <input type="text" class="form-control" id="editEmergencyName" value="Ahmad Khairi Bin Abdullah">
+              </div>
+              <div class="col-md-6">
+                <label for="editRelationship" class="form-label">Relationship</label>
+                <select class="form-select" id="editRelationship">
+                  <option value="father" selected>Father</option>
+                  <option value="mother">Mother</option>
+                  <option value="guardian">Guardian</option>
+                  <option value="spouse">Spouse</option>
+                  <option value="sibling">Sibling</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label for="editEmergencyPhone" class="form-label">Phone Number</label>
+                <input type="tel" class="form-control" id="editEmergencyPhone" value="0123456789">
+              </div>
+              <div class="col-md-6">
+                <label for="editEmergencyEmail" class="form-label">Email</label>
+                <input type="email" class="form-control" id="editEmergencyEmail" value="ahmad.khairi@email.com">
+              </div>
+            </div>
+          </div>
+
+          <!-- Additional Settings -->
+          <div class="mb-3">
+            <h6 class="fw-bold text-info border-bottom pb-2 mb-3">
+              <i class="bi bi-gear me-2"></i>Privacy Settings
+            </h6>
+            <div class="row g-3">
+              <div class="col-md-12">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="profileVisibility" checked>
+                  <label class="form-check-label" for="profileVisibility">
+                    Make profile visible to other students
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="emailNotifications" checked>
+                  <label class="form-check-label" for="emailNotifications">
+                    Receive email notifications for academic updates
+                  </label>
+                </div>
+              </div>
+              <div class="col-md-12">
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" id="taskReminders" checked>
+                  <label class="form-check-label" for="taskReminders">
+                    Send task deadline reminders
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="editProfileForm" class="btn btn-primary">
+          <i class="bi bi-check-circle me-1"></i>
+          Save Changes
+        </button>
       </div>
     </div>
-
-    <!-- Column 2: Personal Information -->
-    <div class="col-md-8">
-      <div class="card p-4 shadow-sm profile-card">
-        <div class="mb-3">
-          <h5>Full Name:</h5>
-          <p id="studentName">Aisyah Nadhirah Binti Ahamad Khairi</p>
-        </div>
-        <div class="mb-3">
-          <h5>Student ID:</h5>
-          <p id="studentID">2025180137</p>
-        </div>
-        <div class="mb-3">
-          <h5>Email:</h5>
-          <p id="studentEmail">2025180137@student.uitm.edu.my</p>
-        </div>
-        <div class="mb-3">
-          <h5>Mobile:</h5>
-          <p id="studentNumber">0178990494</p>
-        </div>
-        <div class="mb-3">
-          <h5>Program:</h5>
-          <p id="studentProgram">Bachelor of Information Science (Hons)</p>
-        </div>
-      </div>
-    </div>
-
   </div>
 </div>
-
-
-  <!-- Edit Profile Modal -->
-  <div class="modal fade" id="editProfileModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #CBAACB;">
-          <h5 class="modal-title">Edit Profile</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editProfileForm">
-            <div class="mb-3">
-              <label for="editName" class="form-label">Name</label>
-              <input type="text" class="form-control" id="editName" required>
-            </div>
-            <div class="mb-3">
-              <label for="editEmail" class="form-label">Email</label>
-              <input type="email" class="form-control" id="editEmail" required>
-            </div>
-            <div class="mb-3">
-              <label for="editProgram" class="form-label">Program</label>
-              <input type="text" class="form-control" id="editProgram" required>
-            </div>
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary btn-pastel">Save Changes</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -3,131 +3,596 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Task Manager - Subjects</title>
-  <!-- Bootstrap 5 CSS -->
+  <title>EduTask Manager- Subjects</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Custom CSS -->
   <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-light-pastel" data-page="subjects">
+<body data-page="subjects" class="dashboard-body">
 
+<div class="app-container d-flex">
+  <!-- Mobile Toggle Button (already present in navbar, so skip duplicate) -->
 
   <!-- Sidebar -->
-  <nav class="sidebar bg-purple p-3">
-    <h4 class="text-white fw-bold mb-4">Task Manager</h4>
-    <ul class="nav flex-column">
-      <li class="nav-item mb-2"><a href="dashboard.html" class="nav-link"><i class="bi bi-display me-2"></i> Dashboard</a></li>
-      <li class="nav-item mb-2"><a href="tasks.html" class="nav-link"><i class="bi bi-list-check me-2"></i> Tasks</a></li>
-      <li class="nav-item mb-2"><a href="subjects.html" class="nav-link active"><i class="bi bi-bookmarks me-2"></i> Subjects</a></li>
-      <li class="nav-item mb-2"><a href="profile.html" class="nav-link"><i class="bi bi-person-badge me-2"></i> Profile</a></li>
-      <li class="nav-item mb-2"><a href="index.html" class="nav-link"><i class="bi bi-box-arrow-right me-2"></i> Logout</a></li>
-    </ul>
-  </nav>
-
-  <!-- Main Content + Right Column -->
-  <div class="flex-grow-1 ms-3">
-    
-   <!-- TOP NAVBAR -->
-<nav class="top-navbar d-flex align-items-center justify-content-between px-4 py-2" style="background-color: #f692f1;">
-    <h4 class="m-0 fw-bold">Task Manager</h4>
-
-    <div class="d-flex align-items-center gap-3">
-        <!-- Search -->
-        <input type="text" class="form-control search-bar" placeholder="Search tasks..." style="max-width: 200px;">
-
-        <!-- Profile (clickable) -->
-        <a href="profile.html">
-            <img src="pic/profileid.png" class="profile-icon rounded-circle" width="35" alt="Profile">
+  <div class="offcanvas offcanvas-start d-lg-block sidebar-wrapper" tabindex="-1" id="sidebarOffcanvas">
+    <div class="offcanvas-header d-lg-none">
+      <h5 class="offcanvas-title text-white">Menu</h5>
+      <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+    </div>
+    <nav class="sidebar bg-gradient-purple p-3 h-100">
+      <div class="sidebar-brand mb-4">
+        <h4 class="text-white fw-bold mb-0">
+          <i class="bi bi-check-circle-fill me-2"></i>
+          Task Manager
+        </h4>
+      </div>
+      <ul class="nav flex-column sidebar-nav">
+        <li class="nav-item mb-2">
+          <a href="dashboard.html" class="nav-link">
+            <i class="bi bi-speedometer2 me-2"></i> 
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="tasks.html" class="nav-link">
+            <i class="bi bi-list-check me-2"></i> 
+            <span>Tasks</span>
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="subjects.html" class="nav-link active">
+            <i class="bi bi-bookmarks me-2"></i> 
+            <span>Subjects</span>
+          </a>
+        </li>
+        <li class="nav-item mb-2">
+          <a href="profile.html" class="nav-link">
+            <i class="bi bi-person-badge me-2"></i> 
+            <span>Profile</span>
+          </a>
+        </li>
+      </ul>
+      <div class="sidebar-footer mt-auto pt-3">
+        <a href="index.html" class="nav-link logout-link">
+          <i class="bi bi-box-arrow-right me-2"></i> 
+          <span>Logout</span>
         </a>
+      </div>
+    </nav>
+  </div>
 
-        <!-- Logout -->
-        <a href="index.html" class="btn btn-outline-dark btn-sm">Logout</a>
-    </div>
-</nav>
+  <!-- Main Content Area -->
+<div class="main-content flex-grow-1">
+    <!-- TOP NAVBAR -->
+    <header class="top-navbar navbar navbar-expand-lg">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center">
+          <button class="btn d-lg-none me-2 mobile-sidebar-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
+            <i class="bi bi-list"></i>
+          </button>
+          <h4 class="navbar-brand mb-0">
+            <i class="bi bi-bookmarks me-2 text-primary"></i>
+            Subjects
+          </h4>
+        </div>
 
-    <div class="container-fluid mt-4">
-      <div class="row">
-<nav aria-label="breadcrumb">
-  <ol class="breadcrumb" id="breadcrumb">
-    <!-- JS akan populate breadcrumb di sini -->
-  </ol>
-</nav>
+        <!-- Navbar Center - Navigation Links -->
+        <div class="navbar-nav d-flex flex-row align-items-center gap-2 d-none d-lg-flex">
+          <div class="nav-item">
+            <a class="nav-link" href="dashboard.html">
+              <i class="bi bi-house me-1"></i>
+              <span class="d-none d-xl-inline">Home</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link" href="tasks.html">
+              <i class="bi bi-list-check me-1"></i>
+              <span class="d-none d-xl-inline">Tasks</span>
+            </a>
+          </div>
+          <div class="nav-item">
+            <a class="nav-link active" href="subjects.html">
+              <i class="bi bi-bookmarks me-1"></i>
+              <span class="d-none d-xl-inline">Subjects</span>
+            </a>
+          </div>
+        </div>
 
-  <!-- Subjects Content -->
-  <div class="container my-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <h2 class="text-dark">My Subjects</h2>
-      <button class="btn btn-primary btn-pastel" data-bs-toggle="modal" data-bs-target="#addSubjectModal">Add Subject</button>
-    </div>
+        <!-- Navbar Right - User Actions -->
+        <div class="navbar-nav d-flex flex-row align-items-center gap-2">
 
-    <!-- Subjects Table -->
-    <div class="card p-3 shadow-sm">
-      <div class="table-responsive">
-        <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>Subject Name</th>
-              <th>Code</th>
-              <th>Instructor</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="subjectTable">
-            <tr>
-              <td>Web Design</td>
-              <td>WD101</td>
-              <td>Dr. Aisyah</td>
-              <td>
-                <button class="btn btn-sm btn-secondary">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>
-            </tr>
-            <tr>
-              <td>IT Fundamentals</td>
-              <td>LCC501</td>
-              <td>Mr. Hafiz</td>
-              <td>
-                <button class="btn btn-sm btn-secondary">Edit</button>
-                <button class="btn btn-sm btn-danger">Delete</button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+          <!-- Notifications -->
+          <div class="nav-item dropdown">
+            <button class="btn btn-link position-relative notification-btn" type="button" data-bs-toggle="dropdown">
+              <i class="bi bi-bell"></i>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">3</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" style="width: 320px;">
+              <li class="dropdown-header d-flex justify-content-between align-items-center">
+                <span class="fw-bold">Notifications</span>
+                <button class="btn btn-sm btn-link text-primary p-0">Mark all read</button>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <a class="dropdown-item py-3" href="#">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                      <div class="bg-warning rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-clock text-white"></i>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1">
+                      <strong>Assignment Due Soon</strong>
+                      <div class="text-muted small">Web Design project due in 2 hours</div>
+                      <div class="text-muted small">2 minutes ago</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-3" href="#">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                      <div class="bg-success rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-check text-white"></i>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1">
+                      <strong>Task Completed</strong>
+                      <div class="text-muted small">Research paper submitted successfully</div>
+                      <div class="text-muted small">1 hour ago</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a class="dropdown-item py-3" href="#">
+                  <div class="d-flex">
+                    <div class="flex-shrink-0 me-3">
+                      <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-calendar text-white"></i>
+                      </div>
+                    </div>
+                    <div class="flex-grow-1">
+                      <strong>New Class Schedule</strong>
+                      <div class="text-muted small">LCC501 moved to Room A102</div>
+                      <div class="text-muted small">3 hours ago</div>
+                    </div>
+                  </div>
+                </a>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-center text-primary" href="#">View all notifications</a></li>
+            </ul>
+          </div>
+          <!-- Profile Dropdown -->
+          <div class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" role="button" data-bs-toggle="dropdown">
+              <img src="pic/profileid.png" class="profile-avatar rounded-circle me-2" alt="Profile">
+              <div class="d-none d-md-block text-start">
+                <div class="fw-bold" style="font-size: 0.9rem; line-height: 1.2;">Aisyah N.</div>
+                <div class="text-muted" style="font-size: 0.75rem; line-height: 1;">Student</div>
+              </div>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li class="dropdown-header">
+                <div class="d-flex align-items-center">
+                  <img src="pic/profileid.png" class="rounded-circle me-2" width="40" height="40" alt="Profile">
+                  <div>
+                    <div class="fw-bold">Aisyah Nadhirah</div>
+                    <div class="text-muted small">2025180137</div>
+                  </div>
+                </div>
+              </li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="profile.html"><i class="bi bi-person me-2"></i>My Profile</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item text-danger" href="index.html"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+            </ul>
+          </div>
+      </div>
+    </header>
+
+    <!-- Content -->
+    <main class="content-wrapper p-3 p-lg-4">
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb custom-breadcrumb" id="breadcrumb">
+          <!-- JS will populate breadcrumb here -->
+        </ol>
+      </nav>
+
+      <!-- Page Header -->
+      <div class="page-header mb-4">
+        <div class="row align-items-center">
+          <div class="col-md-8">
+            <h1 class="display-6 fw-bold text-gradient mb-2">My Subjects</h1>
+            <p class="lead text-muted mb-3">Manage your academic subjects and course information</p>
+            <div class="d-flex flex-wrap gap-2">
+              <span class="badge bg-primary" id="headerSubjectsBadge"><i class="bi bi-book me-1"></i><span class="header-subjects-count">0</span> subjects enrolled</span>
+              <span class="badge bg-info" id="headerInstructorsBadge"><i class="bi bi-person me-1"></i><span class="header-instructors-count">0</span> instructors</span>
+              <span class="badge bg-success" id="headerCreditsBadge"><i class="bi bi-calendar-check me-1"></i><span class="header-credits-count">0</span> credit hours</span>
+            </div>
+          </div>
+          <div class="col-md-4 text-end">
+            <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#addSubjectModal">
+              <i class="bi bi-plus-circle me-2"></i>Add Subject
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subject Stats -->
+      <div class="row g-3 mb-4">
+        <div class="col-lg-3 col-md-6">
+          <div class="stats-card stats-primary">
+            <div class="stats-icon">
+              <i class="bi bi-book"></i>
+            </div>
+            <div class="stats-content">
+              <h3 class="stats-number">5</h3>
+              <p class="stats-label">Total Subjects</p>
+              <small class="stats-change text-info">
+                <i class="bi bi-info-circle"></i> Current semester
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="stats-card stats-success">
+            <div class="stats-icon">
+              <i class="bi bi-award"></i>
+            </div>
+            <div class="stats-content">
+              <h3 class="stats-number">4.2</h3>
+              <p class="stats-label">Average GPA</p>
+              <small class="stats-change text-success">
+                <i class="bi bi-arrow-up"></i> +0.3 from last sem
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="stats-card stats-info">
+            <div class="stats-icon">
+              <i class="bi bi-person-badge"></i>
+            </div>
+            <div class="stats-content">
+              <h3 class="stats-number">4</h3>
+              <p class="stats-label">Instructors</p>
+              <small class="stats-change text-info">
+                <i class="bi bi-people"></i> Faculty members
+              </small>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6">
+          <div class="stats-card stats-warning">
+            <div class="stats-icon">
+              <i class="bi bi-clock"></i>
+            </div>
+            <div class="stats-content">
+              <h3 class="stats-number">18</h3>
+              <p class="stats-label">Credit Hours</p>
+              <small class="stats-change text-warning">
+                <i class="bi bi-calendar"></i> This semester
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Subject Cards Grid -->
+<div id="subjectCardGrid" class="row g-4 mb-4"></div>
+
+
+    </main>
+  </div>
+
+<!-- Add Subject Modal -->
+<div class="modal fade" id="addSubjectModal" tabindex="-1" aria-labelledby="addSubjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addSubjectModalLabel">
+          <i class="bi bi-plus-circle me-2"></i>
+          Add New Subject
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addSubjectForm">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label for="subjectName" class="form-label">Subject Name</label>
+                <input type="text" class="form-control" id="subjectName" placeholder="Enter subject name..." required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="subjectCode" class="form-label">Subject Code</label>
+                <input type="text" class="form-control" id="subjectCode" placeholder="e.g., CS101" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="subjectDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="subjectDescription" rows="3" placeholder="Brief description of the subject..."></textarea>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="instructor" class="form-label">Instructor Name</label>
+                <input type="text" class="form-control" id="instructor" placeholder="Dr. John Smith" required>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="instructorEmail" class="form-label">Instructor Email</label>
+                <input type="email" class="form-control" id="instructorEmail" placeholder="instructor@uitm.edu.my">
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="subjectCredits" class="form-label">Credit Hours</label>
+                <select class="form-select" id="subjectCredits" required>
+                  <option value="">Select credits...</option>
+                  <option value="1">1 Credit</option>
+                  <option value="2">2 Credits</option>
+                  <option value="3">3 Credits</option>
+                  <option value="4">4 Credits</option>
+                  <option value="6">6 Credits</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="subjectSemester" class="form-label">Semester</label>
+                <select class="form-select" id="subjectSemester" required>
+                  <option value="">Select semester...</option>
+                  <option value="1">Semester 1</option>
+                  <option value="2">Semester 2</option>
+                  <option value="3">Semester 3</option>
+                  <option value="summer">Summer</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="subjectYear" class="form-label">Academic Year</label>
+                <input type="text" class="form-control" id="subjectYear" placeholder="2024/2025" required>
+              </div>
+            </div>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="subjectDays" class="form-label">Class Days</label>
+                <input type="text" class="form-control" id="subjectDays" placeholder="Mon, Wed, Fri">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="subjectTime" class="form-label">Class Time</label>
+                <input type="text" class="form-control" id="subjectTime" placeholder="10:00 AM - 12:00 PM">
+              </div>
+            </div>
+          </div>
+          
+          <div class="mb-3">
+            <label for="subjectRoom" class="form-label">Classroom</label>
+            <input type="text" class="form-control" id="subjectRoom" placeholder="Room A101, Building 2">
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="subjectColor" class="form-label">Color Theme</label>
+                <select class="form-select" id="subjectColor">
+                  <option value="primary">Blue (Primary)</option>
+                  <option value="info">Cyan (Info)</option>
+                  <option value="success">Green (Success)</option>
+                  <option value="warning">Yellow (Warning)</option>
+                  <option value="danger">Red (Danger)</option>
+                  <option value="secondary">Gray (Secondary)</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="subjectIcon" class="form-label">Icon</label>
+                <select class="form-select" id="subjectIcon">
+                  <option value="bi-book">📚 Book</option>
+                  <option value="bi-cpu">💻 Computer</option>
+                  <option value="bi-palette">🎨 Design</option>
+                  <option value="bi-calculator">🧮 Mathematics</option>
+                  <option value="bi-search">🔍 Research</option>
+                  <option value="bi-graph-up">📊 Analytics</option>
+                  <option value="bi-globe">🌐 Web</option>
+                  <option value="bi-lightbulb">💡 Innovation</option>
+                </select>
+              </div>
+            </div>  
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="addSubjectForm" class="btn btn-primary">
+          <i class="bi bi-check-circle me-1"></i>
+          Add Subject
+        </button>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- Add Subject Modal -->
-  <div class="modal fade" id="addSubjectModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header" style="background-color: #CBAACB;">
-          <h5 class="modal-title">Add New Subject</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <form id="addSubjectForm">
-            <div class="mb-3">
-              <label for="subjectName" class="form-label">Subject Name</label>
-              <input type="text" class="form-control" id="subjectName" required>
+
+<!-- Edit Subject Modal -->
+<div class="modal fade" id="editSubjectModal" tabindex="-1" aria-labelledby="editSubjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editSubjectModalLabel">
+          <i class="bi bi-pencil me-2"></i>
+          Edit Subject
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editSubjectForm">
+          <input type="hidden" id="editSubjectIndex">
+          <div class="row">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label for="editSubjectName" class="form-label">Subject Name</label>
+                <input type="text" class="form-control" id="editSubjectName" required>
+              </div>
             </div>
-            <div class="mb-3">
-              <label for="subjectCode" class="form-label">Subject Code</label>
-              <input type="text" class="form-control" id="subjectCode" required>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="editSubjectCode" class="form-label">Subject Code</label>
+                <input type="text" class="form-control" id="editSubjectCode" required>
+              </div>
             </div>
-            <div class="mb-3">
-              <label for="instructor" class="form-label">Instructor</label>
-              <input type="text" class="form-control" id="instructor" required>
+          </div>
+          <div class="mb-3">
+            <label for="editSubjectDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="editSubjectDescription" rows="3"></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editInstructor" class="form-label">Instructor Name</label>
+                <input type="text" class="form-control" id="editInstructor" required>
+              </div>
             </div>
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary btn-pastel">Add Subject</button>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editInstructorEmail" class="form-label">Instructor Email</label>
+                <input type="email" class="form-control" id="editInstructorEmail">
+              </div>
             </div>
-          </form>
-        </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="editSubjectCredits" class="form-label">Credit Hours</label>
+                <select class="form-select" id="editSubjectCredits" required>
+                  <option value="1">1 Credit</option>
+                  <option value="2">2 Credits</option>
+                  <option value="3">3 Credits</option>
+                  <option value="4">4 Credits</option>
+                  <option value="6">6 Credits</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="editSubjectSemester" class="form-label">Semester</label>
+                <select class="form-select" id="editSubjectSemester" required>
+                  <option value="1">Semester 1</option>
+                  <option value="2">Semester 2</option>
+                  <option value="3">Semester 3</option>
+                  <option value="summer">Summer</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="editSubjectYear" class="form-label">Academic Year</label>
+                <input type="text" class="form-control" id="editSubjectYear" required>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editSubjectDays" class="form-label">Class Days</label>
+                <input type="text" class="form-control" id="editSubjectDays">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editSubjectTime" class="form-label">Class Time</label>
+                <input type="text" class="form-control" id="editSubjectTime">
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="editSubjectRoom" class="form-label">Classroom</label>
+            <input type="text" class="form-control" id="editSubjectRoom">
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editSubjectColor" class="form-label">Color Theme</label>
+                <select class="form-select" id="editSubjectColor">
+                  <option value="primary">Blue (Primary)</option>
+                  <option value="info">Cyan (Info)</option>
+                  <option value="success">Green (Success)</option>
+                  <option value="warning">Yellow (Warning)</option>
+                  <option value="danger">Red (Danger)</option>
+                  <option value="secondary">Gray (Secondary)</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="editSubjectIcon" class="form-label">Icon</label>
+                <select class="form-select" id="editSubjectIcon">
+                  <option value="bi-book">📚 Book</option>
+                  <option value="bi-cpu">💻 Computer</option>
+                  <option value="bi-palette">🎨 Design</option>
+                  <option value="bi-calculator">🧮 Mathematics</option>
+                  <option value="bi-search">🔍 Research</option>
+                  <option value="bi-graph-up">📊 Analytics</option>
+                  <option value="bi-globe">🌐 Web</option>
+                  <option value="bi-lightbulb">💡 Innovation</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" form="editSubjectForm" class="btn btn-primary">
+          <i class="bi bi-check-circle me-1"></i>
+          Save Changes
+        </button>
       </div>
     </div>
   </div>
+</div>
+
+<!-- View Subject Modal -->
+<div class="modal fade" id="viewSubjectModal" tabindex="-1" aria-labelledby="viewSubjectModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="viewSubjectModalLabel">
+          <i class="bi bi-eye me-2"></i>
+          Subject Details
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="viewSubjectDetails"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
