@@ -388,8 +388,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value.trim();
 
-            const validEmail = "2022463642@student.uitm.edu.my";
-            const validPassword = "123456abcd@";
+            const validEmail = "2025180137@student.uitm.edu.my";
+            const validPassword = "Aisyah12345";
 
             if (email === validEmail && password === validPassword) {
                 window.location.href = "dashboard.html";
