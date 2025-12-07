@@ -1435,7 +1435,7 @@ function initializeCharts() {
     });
     taskChart.update();
 
-    // Weekly Study Hours Bar Chart
+    // Study Hours Bar Chart
     const studyCtx = document.getElementById('studyChart').getContext('2d');
     const studyChart = new Chart(studyCtx, {
         type: 'bar',
@@ -1443,7 +1443,8 @@ function initializeCharts() {
             labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
             datasets: [{
                 label: 'Study Hours',
-                data: [3, 5, 2, 8, 6, 4, 1],
+                // start with zero input; chart will be updated from saved schedules
+                data: [0, 0, 0, 0, 0, 0, 0],
                 backgroundColor: [
                     'rgba(139, 69, 19, 0.8)',   // Monday
                     'rgba(255, 99, 132, 0.8)',  // Tuesday
@@ -1497,7 +1498,18 @@ function initializeCharts() {
                 tooltip: {
                     callbacks: {
                         label: function(context) {
-                            return `${context.parsed.y} hours studied`;
+                            const idx = context.dataIndex;
+                            const total = context.parsed && (context.parsed.y || context.parsed) ? (context.parsed.y || context.parsed) : context.raw || 0;
+                            const breakdown = (window.studyChart && window.studyChart.__subjectBreakdown && window.studyChart.__subjectBreakdown[idx]) ? window.studyChart.__subjectBreakdown[idx] : [];
+                            const lines = [`${total} hours studied`];
+                            if (breakdown.length > 0) {
+                                breakdown.forEach(b => {
+                                    lines.push(`${b.subject}: ${b.hours}h`);
+                                });
+                            } else {
+                                lines.push('No study sessions');
+                            }
+                            return lines;
                         }
                     }
                 }
@@ -1510,13 +1522,18 @@ function initializeCharts() {
         }
     });
 
+    // expose studyChart so other code can update it
+    try { window.studyChart = studyChart; } catch (e) { /* ignore */ }
+    // populate chart from saved schedules (if any)
+    try { if (typeof updateStudyChart === 'function') updateStudyChart(); } catch (e) { /* ignore */ }
+
     // Add click handlers for interactive features
     taskChart.options.onClick = (event, elements) => {
         if (elements.length > 0) {
             const dataIndex = elements[0].index;
             const label = taskChart.data.labels[dataIndex];
             console.log(`Clicked on ${label} section`);
-            // You could navigate to filtered tasks view here
+            //  navigate to filtered tasks view 
         }
     };
 
@@ -1526,7 +1543,7 @@ function initializeCharts() {
             const day = studyChart.data.labels[dataIndex];
             const hours = studyChart.data.datasets[0].data[dataIndex];
             console.log(`${day}: ${hours} hours`);
-            // You could show detailed schedule for that day
+            //  show detailed schedule for that day
         }
     };
 }
@@ -1545,12 +1562,28 @@ document.addEventListener('DOMContentLoaded', function() {
             const notes = document.getElementById('studyNotes').value;
             
             // Here you would typically save to localStorage or send to a server
+            // compute start and end times
+            const startDateTime = new Date(`${date}T${time}`);
+            const durHours = parseFloat(duration) || 0;
+            const endDateTime = new Date(startDateTime.getTime() + durHours * 3600 * 1000);
+            // format time strings HH:MM
+            function fmtTime(d) {
+                if (!d || isNaN(d)) return '';
+                const hh = String(d.getHours()).padStart(2,'0');
+                const mm = String(d.getMinutes()).padStart(2,'0');
+                return `${hh}:${mm}`;
+            }
             const scheduleData = {
+                id: Date.now(),
                 subject,
                 date,
-                time,
-                duration: parseFloat(duration),
+                time: fmtTime(startDateTime),
+                startISO: startDateTime.toISOString(),
+                endISO: endDateTime.toISOString(),
+                endTime: fmtTime(endDateTime),
+                duration: durHours,
                 notes,
+                reminderSet: false,
                 created: new Date().toISOString()
             };
             
@@ -1558,8 +1591,12 @@ document.addEventListener('DOMContentLoaded', function() {
             let schedules = JSON.parse(localStorage.getItem('studySchedules')) || [];
             schedules.push(scheduleData);
             localStorage.setItem('studySchedules', JSON.stringify(schedules));
-            // Notification: study scheduled
-            if (typeof addNotification === 'function') addNotification('schedule', 'Study session scheduled', `${subject} on ${date} at ${time}`);
+            // Notification: study scheduled (include start → end)
+            if (typeof addNotification === 'function') addNotification('schedule', 'Study session scheduled', `${subject} on ${date} • ${scheduleData.time} - ${scheduleData.endTime}`);
+            // Update study chart immediately
+            try { if (typeof updateStudyChart === 'function') updateStudyChart(); } catch (e) { console.error('updateStudyChart error', e); }
+            // Refresh upcoming schedules UI
+            try { if (typeof renderUpcomingSchedules === 'function') renderUpcomingSchedules(); } catch (e) { /* ignore */ }
             
             // Show success message
             alert(`Study session scheduled successfully!\nSubject: ${subject}\nDate: ${date}\nTime: ${time}`);
@@ -1581,6 +1618,9 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Add some interactive features
     addInteractiveFeatures();
+    // render upcoming schedules and schedule reminders that were set
+    try { if (typeof renderUpcomingSchedules === 'function') renderUpcomingSchedules(); } catch (e) { /* ignore */ }
+    try { if (typeof scheduleAllRemindersOnLoad === 'function') scheduleAllRemindersOnLoad(); } catch (e) { /* ignore */ }
 });
 
 function addInteractiveFeatures() {
@@ -1982,3 +2022,208 @@ function addInteractiveFeatures() {
         });
     }
 }
+
+// ---------- Study schedule helpers ----------
+// Compute weekly study data (Mon..Sun) from localStorage.studySchedules
+function getWeeklyStudyData() {
+    const schedules = JSON.parse(localStorage.getItem('studySchedules')) || [];
+    const totals = [0,0,0,0,0,0,0]; // Mon..Sun
+    schedules.forEach(s => {
+        if (!s || !s.date) return;
+        const d = new Date(s.date);
+        if (isNaN(d)) return;
+        const day = d.getDay(); // 0 Sun .. 6 Sat
+        // map to index: Mon=0 .. Sun=6
+        const idx = (day + 6) % 7;
+        const dur = parseFloat(s.duration) || 0;
+        totals[idx] += dur;
+    });
+    return totals;
+}
+
+function updateStudyChart() {
+    try {
+        // Build totals and per-day subject breakdown from schedules
+        const schedules = JSON.parse(localStorage.getItem('studySchedules')) || [];
+        const totals = [0,0,0,0,0,0,0];
+        const breakdownMap = [ {}, {}, {}, {}, {}, {}, {} ];
+        schedules.forEach(s => {
+            if (!s || !s.date) return;
+            const d = new Date(s.date);
+            if (isNaN(d)) return;
+            const day = d.getDay(); // 0 Sun .. 6 Sat
+            const idx = (day + 6) % 7; // Mon=0 .. Sun=6
+            const dur = parseFloat(s.duration) || 0;
+            const subj = (s.subject || 'Unknown').toString();
+            totals[idx] += dur;
+            breakdownMap[idx][subj] = (breakdownMap[idx][subj] || 0) + dur;
+        });
+
+        // Convert breakdownMap objects into arrays [{subject,hours}, ...]
+        const breakdownList = breakdownMap.map(obj => Object.keys(obj).map(k => ({ subject: k, hours: obj[k] })));
+
+        if (window.studyChart && window.studyChart.data && window.studyChart.data.datasets && window.studyChart.data.datasets[0]) {
+            window.studyChart.data.datasets[0].data = totals;
+            // attach breakdown for tooltip use
+            try { window.studyChart.__subjectBreakdown = breakdownList; } catch (e) { /* ignore */ }
+            // Optionally adjust y.max to fit data (keep a sensible minimum)
+            const maxVal = Math.max(...totals, 10);
+            if (window.studyChart.options && window.studyChart.options.scales && window.studyChart.options.scales.y) {
+                window.studyChart.options.scales.y.max = Math.max(10, Math.ceil(maxVal / 2) * 2);
+            }
+            window.studyChart.update();
+        }
+    } catch (err) {
+        console.error('Failed to update study chart', err);
+    }
+}
+
+// ---------- Upcoming schedules UI & reminders ----------
+(function(){
+    // store timeouts so they can be cleared if needed
+    window._scheduleTimeouts = window._scheduleTimeouts || {};
+
+    function requestNotificationPermission() {
+        return new Promise((resolve) => {
+            if (!('Notification' in window)) return resolve('unsupported');
+            if (Notification.permission === 'granted') return resolve('granted');
+            if (Notification.permission === 'denied') return resolve('denied');
+            Notification.requestPermission().then(p => resolve(p));
+        });
+    }
+
+    window.toggleReminder = async function(scheduleId) {
+        try {
+            const schedules = JSON.parse(localStorage.getItem('studySchedules')) || [];
+            const idx = schedules.findIndex(s => s.id == scheduleId);
+            if (idx === -1) return;
+            const schedule = schedules[idx];
+            if (schedule.reminderSet) {
+                // cancel
+                schedule.reminderSet = false;
+                // clear timeout
+                if (window._scheduleTimeouts && window._scheduleTimeouts[scheduleId]) {
+                    clearTimeout(window._scheduleTimeouts[scheduleId]);
+                    delete window._scheduleTimeouts[scheduleId];
+                }
+            } else {
+                // set reminder - ensure permission
+                const perm = await requestNotificationPermission();
+                if (perm !== 'granted') {
+                    alert('Notifications permission is required to set reminders.');
+                    return;
+                }
+                schedule.reminderSet = true;
+                scheduleReminderFor(schedule);
+            }
+            schedules[idx] = schedule;
+            localStorage.setItem('studySchedules', JSON.stringify(schedules));
+            if (typeof renderUpcomingSchedules === 'function') renderUpcomingSchedules();
+        } catch (err) {
+            console.error('toggleReminder error', err);
+        }
+    };
+
+    window.scheduleReminderFor = function(schedule) {
+        try {
+            if (!schedule || !schedule.startISO) return;
+            const start = new Date(schedule.startISO).getTime();
+            const now = Date.now();
+            const delay = start - now;
+            // clear existing
+            if (window._scheduleTimeouts[schedule.id]) {
+                clearTimeout(window._scheduleTimeouts[schedule.id]);
+                delete window._scheduleTimeouts[schedule.id];
+            }
+            if (delay <= 0) {
+                // start time passed — show immediate notification
+                showScheduleNotification(schedule);
+                return;
+            }
+            // set timeout (note: long delays may be unreliable in background)
+            const t = setTimeout(() => {
+                showScheduleNotification(schedule);
+                // clear flag if you want one-time reminders
+                // keep reminderSet true to indicate user set it
+            }, delay);
+            window._scheduleTimeouts[schedule.id] = t;
+        } catch (err) {
+            console.error('scheduleReminderFor error', err);
+        }
+    };
+
+    function showScheduleNotification(schedule) {
+        try {
+            if (!('Notification' in window) || Notification.permission !== 'granted') {
+                // fallback: alert
+                alert(`Reminder: ${schedule.subject} • ${schedule.date} ${schedule.time} - ${schedule.endTime}`);
+                return;
+            }
+            const title = `Study session: ${schedule.subject}`;
+            const body = `${schedule.date} • ${schedule.time} - ${schedule.endTime}`;
+            const n = new Notification(title, { body });
+            // optionally focus/open the app when clicked
+            n.onclick = function() { window.focus(); };
+        } catch (err) {
+            console.error('showScheduleNotification error', err);
+        }
+    }
+
+    window.renderUpcomingSchedules = function() {
+        try {
+            const container = document.getElementById('upcomingList');
+            if (!container) return;
+            const schedules = JSON.parse(localStorage.getItem('studySchedules')) || [];
+            const now = Date.now();
+            // upcoming: start >= now
+            const upcoming = schedules.filter(s => s.startISO && new Date(s.startISO).getTime() >= now);
+            upcoming.sort((a,b) => new Date(a.startISO) - new Date(b.startISO));
+            container.innerHTML = '';
+            if (upcoming.length === 0) {
+                container.innerHTML = '<div class="text-muted small p-3">No upcoming sessions</div>';
+                return;
+            }
+            upcoming.forEach(s => {
+                const li = document.createElement('div');
+                li.className = 'list-group-item d-flex align-items-start justify-content-between gap-2';
+                li.innerHTML = `
+                    <div class="me-2">
+                      <div class="fw-semibold subject-label text-truncate" style="max-width:160px">${escapeHtml(s.subject || 'Unknown')}</div>
+                      <div class="small text-muted">${s.date} • ${s.time} - ${s.endTime}</div>
+                    </div>
+                    <div class="d-flex flex-column align-items-end">
+                      <button class="btn btn-sm ${s.reminderSet ? 'btn-success' : 'btn-outline-primary'}" data-id="${s.id}" onclick="toggleReminder(${s.id})">${s.reminderSet ? 'Reminder Set' : 'Set Reminder'}</button>
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+        } catch (err) {
+            console.error('renderUpcomingSchedules error', err);
+        }
+    };
+
+    window.scheduleAllRemindersOnLoad = function() {
+        try {
+            const schedules = JSON.parse(localStorage.getItem('studySchedules')) || [];
+            const now = Date.now();
+            schedules.forEach(s => {
+                if (s.reminderSet) {
+                    const start = new Date(s.startISO).getTime();
+                    if (start > now) {
+                        scheduleReminderFor(s);
+                    } else if (start <= now) {
+                        // if missed while offline, you might want to show immediately
+                    }
+                }
+            });
+        } catch (err) {
+            console.error('scheduleAllRemindersOnLoad error', err);
+        }
+    };
+
+    // small helper to escape html
+    function escapeHtml(str) {
+        return String(str).replace(/[&<>"']/g, function(m) { return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"})[m]; });
+    }
+
+})();
