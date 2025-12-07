@@ -17,7 +17,7 @@ Student Task Manager is a modern web application designed to help students organ
 1. Open the project in your browser (e.g., `index.html`).
 2. Use the following credentials to log in:
    - **Email:** 2025180137@student.uitm.edu.my
-   - **Password:** 123456abcd@
+   - **Password:** Aisyah12345
 3. Upon successful login, you will be redirected to the dashboard.
 
 ## Frameworks & Libraries Used
