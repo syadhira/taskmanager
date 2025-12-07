@@ -1045,7 +1045,6 @@ document.addEventListener("DOMContentLoaded", () => {
             completionRateElement.innerHTML = `<i class="bi bi-arrow-up"></i> ${completionRate}% completion rate`;
         }
 
-        // Pending count is already updated above
 
         // Update overdue status message
         const overdueStatusElement = document.querySelector('.stats-card.stats-danger .stats-change');
@@ -1060,49 +1059,54 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
-    // ============================
+// ============================
 // PROFILE EDIT HANDLER
 // ============================
 if (document.body.dataset.page === 'profile') {
-    const editProfileForm = document.getElementById('editProfileForm');
-    if (editProfileForm) {
-        editProfileForm.addEventListener('submit', function (e) {
-            e.preventDefault();
+  const editProfileForm = document.getElementById('editProfileForm');
+  if (editProfileForm) {
+    editProfileForm.addEventListener('submit', function (e) {
+      e.preventDefault();
 
-            // Collect values
-            const name = document.getElementById("editName").value;
-            const email = document.getElementById("editEmail").value;
-            const phone = document.getElementById("editPhone").value;
-            const dob = document.getElementById("editDOB").value;
-            const gender = document.getElementById("editGender").value;
+      // Ambil value dari form
+      const name = document.getElementById("editName").value;
+      const email = document.getElementById("editEmail").value;
+      const phone = document.getElementById("editPhone").value;
+      const dob = document.getElementById("editDOB").value;
+      const gender = document.getElementById("editGender").value;
+      const program = document.getElementById("editProgram").value;
+      const faculty = document.getElementById("editFaculty").value;
+      const campus = document.getElementById("editCampus").value;
 
-            // Update display
-            document.getElementById("displayName").textContent = name;
-            document.getElementById("studentName").textContent = name;
-            document.getElementById("studentEmail").innerHTML = `<a href="mailto:${email}">${email}</a>`;
-            document.getElementById("studentNumber").innerHTML = `<a href="tel:${phone}">${phone}</a>`;
-            document.getElementById("studentDOB").textContent = dob;
+      // Emergency Contact
+      const emergencyName = document.getElementById("editEmergencyName").value;
+      const relationship = document.getElementById("editRelationship").value;
+      const emergencyPhone = document.getElementById("editEmergencyPhone").value;
+      const emergencyEmail = document.getElementById("editEmergencyEmail").value;
 
-            // Close modal
-            const modal = bootstrap.Modal.getInstance(document.getElementById("editProfileModal"));
-            modal.hide();
+      // Update ke profile display
+      document.getElementById("displayName").textContent = name;
+      document.getElementById("studentName").textContent = name;
+      document.getElementById("studentEmail").innerHTML = `<a href="mailto:${email}">${email}</a>`;
+      document.getElementById("studentNumber").innerHTML = `<a href="tel:${phone}">${phone}</a>`;
+      document.getElementById("studentDOB").textContent = dob;
+      document.getElementById("studentProgram").textContent = program;
 
-            // Save to localStorage (optional)
-            const profileData = { name, email, phone, dob, gender };
-            localStorage.setItem("profileData", JSON.stringify(profileData));
-        });
+      // Update Emergency Contact
+      document.getElementById("emergencyName").textContent = emergencyName;
+      document.getElementById("emergencyRelation").textContent = relationship;
+      document.getElementById("emergencyPhone").innerHTML = `<a href="tel:${emergencyPhone}">${emergencyPhone}</a>`;
+      document.getElementById("emergencyEmail").innerHTML = `<a href="mailto:${emergencyEmail}">${emergencyEmail}</a>`;
 
-        // Load saved profile data on page load
-        const saved = JSON.parse(localStorage.getItem("profileData"));
-        if (saved) {
-            document.getElementById("displayName").textContent = saved.name;
-            document.getElementById("studentName").textContent = saved.name;
-            document.getElementById("studentEmail").innerHTML = `<a href="mailto:${saved.email}">${saved.email}</a>`;
-            document.getElementById("studentNumber").innerHTML = `<a href="tel:${saved.phone}">${saved.phone}</a>`;
-            document.getElementById("studentDOB").textContent = saved.dob;
-        }
-    }
+      
+      // Tutup modal
+      const modal = bootstrap.Modal.getInstance(document.getElementById("editProfileModal"));
+      modal.hide();
+    });
+  }
 }
+
+
 
 // ============================
 // PRINT ID CARD HANDLER
