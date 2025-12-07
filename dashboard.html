@@ -575,24 +575,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="app.js"></script>
-<script>
- 
-  (function(){
-    function syncHeights(){
-      try{
-        const recent = document.querySelector('.recent-sidebar-card');
-        const moved = document.querySelector('.moved-resources');
-        if (!recent || !moved) return;
-        // match overall card height so bottoms align
-        const height = recent.offsetHeight;
-        moved.style.minHeight = height + 'px';
-      }catch(e){console.error(e)}
-    }
-    document.addEventListener('DOMContentLoaded', function(){ syncHeights(); });
-    window.addEventListener('resize', function(){ syncHeights(); });
-    // also try after a short delay in case fonts/images change layout
-    setTimeout(syncHeights, 800);
-  })();
-</script>
+
 </body>
 </html>

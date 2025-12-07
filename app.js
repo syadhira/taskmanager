@@ -375,6 +375,22 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+     (function(){
+    function syncHeights(){
+      try{
+        const recent = document.querySelector('.recent-sidebar-card');
+        const moved = document.querySelector('.moved-resources');
+        if (!recent || !moved) return;
+        // match overall card height so bottoms align
+        const height = recent.offsetHeight;
+        moved.style.minHeight = height + 'px';
+      }catch(e){console.error(e)}
+    }
+    document.addEventListener('DOMContentLoaded', function(){ syncHeights(); });
+    window.addEventListener('resize', function(){ syncHeights(); });
+    // also try after a short delay in case fonts/images change layout
+    setTimeout(syncHeights, 800);
+  })();
     // Initialize notifications UI on load
     updateNotificationUI();
 
@@ -1098,7 +1114,7 @@ if (document.body.dataset.page === 'profile') {
       document.getElementById("emergencyPhone").innerHTML = `<a href="tel:${emergencyPhone}">${emergencyPhone}</a>`;
       document.getElementById("emergencyEmail").innerHTML = `<a href="mailto:${emergencyEmail}">${emergencyEmail}</a>`;
 
-      
+
       // Tutup modal
       const modal = bootstrap.Modal.getInstance(document.getElementById("editProfileModal"));
       modal.hide();

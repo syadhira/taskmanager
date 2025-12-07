@@ -73,37 +73,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Custom JS -->
   <script src="app.js"></script>
-  <script>
-    document.getElementById('loginBtn').addEventListener('click', function() {
-      const emailInput = document.getElementById('email');
-      const passwordInput = document.getElementById('password');
-      const emailError = document.getElementById('emailError');
-      const passwordError = document.getElementById('passwordError');
-      let valid = true;
-      // Email validation
-      const email = emailInput.value.trim();
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@student\.uitm\.edu\.my$/;
-      if (!emailPattern.test(email)) {
-        emailError.textContent = 'Please enter a valid @student.uitm.edu.my email.';
-        emailError.style.display = 'block';
-        valid = false;
-      } else {
-        emailError.style.display = 'none';
-      }
-      // Password validation (example: password must be 'uitm123')
-      const password = passwordInput.value;
-      if (password !== 'uitm123') {
-        passwordError.textContent = 'Incorrect password.';
-        passwordError.style.display = 'block';
-        valid = false;
-      } else {
-        passwordError.style.display = 'none';
-      }
-      // If valid, redirect (simulate login)
-      if (valid) {
-        window.location.href = 'dashboard.html';
-      }
-    });
-  </script>
+ 
 </body>
 </html>
