@@ -281,7 +281,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
     function renderRecentActivity(){
-        const container = document.querySelector('.recent-activity .activity-list');
+        // Prefer the sidebar recent activity container if present, otherwise fall back
+        const container = document.querySelector('.recent-sidebar-card .activity-list') || document.querySelector('.recent-activity .activity-list');
         if (!container) return;
         const list = loadActivities();
         container.innerHTML = '';

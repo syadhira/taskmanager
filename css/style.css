@@ -768,6 +768,18 @@ h2 {
   background: rgba(0,0,0,0.01);
 }
 
+/* Sidebar Recent Activity: match card body scrolling and compact padding */
+.recent-sidebar-card .card-body .activity-list {
+  max-height: 360px;
+  overflow-y: auto;
+  padding: 0;
+}
+.recent-sidebar-card .activity-item {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.recent-sidebar-card .activity-item:last-child { border-bottom: none; }
+
 .activity-icon {
   width: 40px;
   height: 40px;
