@@ -1621,6 +1621,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // render upcoming schedules and schedule reminders that were set
     try { if (typeof renderUpcomingSchedules === 'function') renderUpcomingSchedules(); } catch (e) { /* ignore */ }
     try { if (typeof scheduleAllRemindersOnLoad === 'function') scheduleAllRemindersOnLoad(); } catch (e) { /* ignore */ }
+    // Attach handler for study chart refresh/reset button
+    try {
+        const refreshBtn = document.getElementById('studyRefreshBtn');
+        if (refreshBtn) {
+            refreshBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                const ok = confirm('Reset all study schedules? This will delete all saved sessions and reminders.');
+                if (!ok) return;
+                try { if (typeof window.clearStudySchedules === 'function') { window.clearStudySchedules(); } else { /* fallback */ localStorage.removeItem('studySchedules'); renderUpcomingSchedules(); if (typeof updateStudyChart === 'function') updateStudyChart(); } } catch (err) { console.error('clearStudySchedules failed', err); }
+            });
+        }
+    } catch (err) { console.error('attach refresh handler failed', err); }
 });
 
 function addInteractiveFeatures() {
@@ -2218,6 +2230,29 @@ function updateStudyChart() {
             });
         } catch (err) {
             console.error('scheduleAllRemindersOnLoad error', err);
+        }
+    };
+
+    // Clear all study schedules and reminders, reset UI and chart to zero
+    window.clearStudySchedules = function() {
+        try {
+            // clear stored schedules
+            localStorage.removeItem('studySchedules');
+            // clear any scheduled timeouts
+            if (window._scheduleTimeouts) {
+                Object.keys(window._scheduleTimeouts).forEach(k => {
+                    try { clearTimeout(window._scheduleTimeouts[k]); } catch (e) {}
+                });
+                window._scheduleTimeouts = {};
+            }
+            // re-render upcoming list and update chart
+            try { if (typeof renderUpcomingSchedules === 'function') renderUpcomingSchedules(); } catch (e) { console.error(e); }
+            try { if (typeof updateStudyChart === 'function') updateStudyChart(); } catch (e) { console.error(e); }
+            // add activity + notification
+            try { if (typeof addActivity === 'function') addActivity('Cleared all study schedules', 'reminder'); } catch (e) {}
+            try { if (typeof addNotification === 'function') addNotification('schedule', 'Study schedules reset', 'All study sessions have been removed.'); } catch (e) {}
+        } catch (err) {
+            console.error('Error clearing study schedules', err);
         }
     };
 

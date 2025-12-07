@@ -754,6 +754,20 @@ h2 {
   border-bottom: none;
 }
 
+/* Make Recent Activity list scrollable inside card to save space */
+.recent-activity .card-body .activity-list {
+  max-height: 220px;
+  overflow-y: auto;
+  padding: 0;
+}
+.recent-activity .activity-item {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+}
+.recent-activity .activity-item:hover {
+  background: rgba(0,0,0,0.01);
+}
+
 .activity-icon {
   width: 40px;
   height: 40px;

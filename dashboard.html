@@ -307,7 +307,7 @@
                      Study Hours 
                   </h5>
                   <div class="chart-controls">
-                    <button class="btn btn-sm btn-outline-secondary">
+                    <button id="studyRefreshBtn" class="btn btn-sm btn-outline-secondary" title="Reset study data">
                       <i class="bi bi-arrow-clockwise"></i>
                     </button>
                   </div>
@@ -432,24 +432,8 @@
             </div>
           </div>
 
-          <!-- Upcoming Study Sessions -->
-          <div class="sidebar-card upcoming-sessions-card mb-4" id="upcomingSchedulesCard">
-            <div class="card-header">
-              <h5 class="mb-0">
-                <i class="bi bi-clock-history me-2"></i>
-                Upcoming Sessions
-              </h5>
-            </div>
-            <div class="card-body p-2">
-              <div id="upcomingList" class="list-group list-group-flush">
-                <!-- Items inserted by JS -->
-                <div class="text-muted small p-3">No upcoming sessions</div>
-              </div>
-            </div>
-          </div>
-
           <!-- Resource Links -->
-          <div class="sidebar-card resources-card">
+          <div class="sidebar-card resources-card mb-4">
             <div class="card-header">
               <h5 class="mb-0">
                 <i class="bi bi-collection me-2"></i>
@@ -468,7 +452,7 @@
                   </div>
                   <i class="bi bi-box-arrow-up-right resource-external"></i>
                 </a>
-                
+
                 <a href="https://ptar.uitm.edu.my/pddt/subjects/databases.php?letter=bytype&type=E%2dJournal" target="_blank" class="resource-item">
                   <div class="resource-icon">
                     <i class="bi bi-journal-text"></i>
@@ -479,7 +463,7 @@
                   </div>
                   <i class="bi bi-box-arrow-up-right resource-external"></i>
                 </a>
-                
+
                 <a href="#" class="resource-item">
                   <div class="resource-icon">
                     <i class="bi bi-mortarboard"></i>
@@ -490,6 +474,21 @@
                   </div>
                   <i class="bi bi-chevron-right resource-arrow"></i>
                 </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Upcoming Study Sessions -->
+          <div class="sidebar-card upcoming-sessions-card mb-4" id="upcomingSchedulesCard">
+            <div class="card-header">
+              <h5 class="mb-0">
+                <i class="bi bi-clock-history me-2"></i>
+                Upcoming Sessions
+              </h5>
+            </div>
+            <div class="card-body p-0">
+              <div id="upcomingList" class="list-group list-group-flush">
+                <div class="list-group-item text-muted text-center">No upcoming sessions</div>
               </div>
             </div>
           </div>
