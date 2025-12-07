@@ -258,6 +258,56 @@ document.addEventListener("DOMContentLoaded", () => {
         updateNotificationUI();
     }
 
+    // ----------------------------
+    // Recent Activity (real-time)
+    // ----------------------------
+    function loadActivities() {
+        try { return JSON.parse(localStorage.getItem('activitiesData')) || []; } catch (e) { return []; }
+    }
+    function saveActivities(list) { try { localStorage.setItem('activitiesData', JSON.stringify(list)); } catch (e) { console.error('saveActivities failed', e); } }
+    function timeAgoShort(iso) {
+        if (!iso) return '';
+        const then = new Date(iso);
+        if (isNaN(then)) return iso;
+        const diff = Date.now() - then.getTime();
+        const sec = Math.floor(diff/1000);
+        if (sec < 60) return sec + 's ago';
+        const min = Math.floor(sec/60);
+        if (min < 60) return min + 'm ago';
+        const hr = Math.floor(min/60);
+        if (hr < 24) return hr + 'h ago';
+        const days = Math.floor(hr/24);
+        return days + ' day' + (days>1?'s':'') + ' ago';
+    }
+    function escapeHtml(s){ return String(s).replace(/[&<>\"]/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+    function renderRecentActivity(){
+        const container = document.querySelector('.recent-activity .activity-list');
+        if (!container) return;
+        const list = loadActivities();
+        container.innerHTML = '';
+        list.slice(0,10).forEach(item => {
+            const iconClass = item.type === 'task' ? 'bi-plus-circle' : item.type === 'reminder' ? 'bi-clock' : item.type === 'complete' ? 'bi-check-circle' : 'bi-activity';
+            const color = item.type === 'task' ? 'bg-primary' : item.type === 'reminder' ? 'bg-warning' : item.type === 'complete' ? 'bg-success' : 'bg-secondary';
+            const el = document.createElement('div');
+            el.className = 'activity-item';
+            el.innerHTML = `\n                <div class="activity-icon ${color}">\n                  <i class="bi ${iconClass}"></i>\n                </div>\n                <div class="activity-content">\n                  <p class="activity-text mb-1" style="color: var(--text-primary);">${escapeHtml(item.text)}</p>\n                  <small class="text-muted" style="color: var(--text-secondary);">${timeAgoShort(item.time)}</small>\n                </div>\n            `;
+            container.appendChild(el);
+        });
+    }
+    function addActivity(text, type){
+        const list = loadActivities();
+        list.unshift({ id: Date.now(), text: text, type: type || 'general', time: new Date().toISOString() });
+        if (list.length > 50) list.splice(50);
+        saveActivities(list);
+        renderRecentActivity();
+    }
+    // expose for console/testing
+    try { window.addActivity = addActivity; } catch (e) {}
+    // initial render and polling for changes (other tabs)
+    renderRecentActivity();
+    let __lastActs = JSON.stringify(loadActivities());
+    setInterval(function(){ const cur = JSON.stringify(loadActivities()); if (cur !== __lastActs){ __lastActs = cur; renderRecentActivity(); } }, 1000);
+
     function updateNotificationUI() {
         const btn = document.querySelector('.notification-btn');
         if (!btn) return;
@@ -421,6 +471,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 reminder: taskReminderChecked
             });
             localStorage.setItem('tasksData', JSON.stringify(tasks));
+            if (typeof addActivity === 'function') addActivity(`Updated task "${taskName}"`, 'task');
+            if (typeof addActivity === 'function') addActivity(`Added new task "${taskName}"`, 'task');
             // ...existing code for adding to table...
             // Create priority badge
             const priorityClass = taskPriority === 'high' ? 'priority-high' : 
@@ -1678,6 +1730,7 @@ function addInteractiveFeatures() {
             updateStatistics();
             console.log('Task deleted successfully!');
             if (typeof addNotification === 'function') addNotification('task', 'Task deleted', taskName);
+            if (typeof addActivity === 'function') addActivity(`Deleted task "${taskName}"`, 'task');
         }
     }
     
@@ -1721,6 +1774,7 @@ function addInteractiveFeatures() {
             updateStatistics();
             console.log('Task marked as completed!');
             if (typeof addNotification === 'function') addNotification('task', 'Task completed', taskName);
+            if (typeof addActivity === 'function') addActivity(`Completed task "${taskName}"`, 'complete');
         }
     }
     
@@ -1863,6 +1917,9 @@ function addInteractiveFeatures() {
             // Notify if due date changed
             if (oldDueDisplay && newDueDisplay && oldDueDisplay !== newDueDisplay) {
                 if (typeof addNotification === 'function') addNotification('task', 'Due date changed', `${taskName}: ${oldDueDisplay} → ${newDueDisplay}`);
+                if (typeof addActivity === 'function') addActivity(`${taskName}: due date changed ${oldDueDisplay} → ${newDueDisplay}`, 'reminder');
+            } else {
+                if (typeof addActivity === 'function') addActivity(`Updated task "${taskName}"`, 'task');
             }
 
             // Hide modal and update statistics
