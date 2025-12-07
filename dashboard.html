@@ -319,7 +319,64 @@
             </div>
           </div>
 
-          <!-- Recent Activity: moved to sidebar to align with Academic Resources -->
+          <!-- Academic Resources  -->
+          <div class="row mt-4">
+            <div class="col-12">
+              <div class="sidebar-card moved-resources match-height mb-4">
+                <div class="card-header">
+                  <h5 class="mb-0">
+                    <i class="bi bi-collection me-2"></i>
+                    Academic Resources
+                  </h5>
+                </div>
+                <div class="card-body">
+                  <div class="resource-list">
+                    <a href="https://library.uitm.edu.my/" target="_blank" class="resource-item">
+                      <div class="resource-icon">
+                        <i class="bi bi-building"></i>
+                      </div>
+                      <div class="resource-content">
+                        <h6 class="mb-1">UiTM Library</h6>
+                        <small class="text-muted">Online catalog & resources</small>
+                      </div>
+                      <i class="bi bi-box-arrow-up-right resource-external"></i>
+                    </a>
+
+                    <a href="https://ptar.uitm.edu.my/pddt/subjects/databases.php?letter=bytype&type=E%2dJournal" target="_blank" class="resource-item">
+                      <div class="resource-icon">
+                        <i class="bi bi-journal-text"></i>
+                      </div>
+                      <div class="resource-content">
+                        <h6 class="mb-1">E-Journal Access</h6>
+                        <small class="text-muted">Research papers & journals</small>
+                      </div>
+                      <i class="bi bi-box-arrow-up-right resource-external"></i>
+                    </a>
+                    <a href="https://ufuture.uitm.edu.my/home/" target="_blank "class="resource-item">
+                      <div class="resource-icon">
+                        <i class="bi bi-mortarboard-fill"></i>
+                      </div>
+                      <div class="resource-content">
+                        <h6 class="mb-1">UFUTURE</h6>
+                        <small class="text-muted">Class attendance & materials</small>
+                      </div>
+                      <i class="bi bi-box-arrow-up-right resource-external"></i>
+                    </a>
+                    <a href="#" class="resource-item">
+                      <div class="resource-icon">
+                        <i class="bi bi-mortarboard"></i>
+                      </div>
+                      <div class="resource-content">
+                        <h6 class="mb-1">Study Guides</h6>
+                        <small class="text-muted">Subject-specific guides</small>
+                      </div>
+                      <i class="bi bi-chevron-right resource-arrow"></i>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Sidebar Column -->
@@ -446,52 +503,6 @@
               </div>
             </div>
           </div>
-
-          <!-- Resource Links -->
-          <div class="sidebar-card resources-card mb-4">
-            <div class="card-header">
-              <h5 class="mb-0">
-                <i class="bi bi-collection me-2"></i>
-                Academic Resources
-              </h5>
-            </div>
-            <div class="card-body">
-              <div class="resource-list">
-                <a href="https://library.uitm.edu.my/" target="_blank" class="resource-item">
-                  <div class="resource-icon">
-                    <i class="bi bi-building"></i>
-                  </div>
-                  <div class="resource-content">
-                    <h6 class="mb-1">UiTM Library</h6>
-                    <small class="text-muted">Online catalog & resources</small>
-                  </div>
-                  <i class="bi bi-box-arrow-up-right resource-external"></i>
-                </a>
-
-                <a href="https://ptar.uitm.edu.my/pddt/subjects/databases.php?letter=bytype&type=E%2dJournal" target="_blank" class="resource-item">
-                  <div class="resource-icon">
-                    <i class="bi bi-journal-text"></i>
-                  </div>
-                  <div class="resource-content">
-                    <h6 class="mb-1">E-Journal Access</h6>
-                    <small class="text-muted">Research papers & journals</small>
-                  </div>
-                  <i class="bi bi-box-arrow-up-right resource-external"></i>
-                </a>
-
-                <a href="#" class="resource-item">
-                  <div class="resource-icon">
-                    <i class="bi bi-mortarboard"></i>
-                  </div>
-                  <div class="resource-content">
-                    <h6 class="mb-1">Study Guides</h6>
-                    <small class="text-muted">Subject-specific guides</small>
-                  </div>
-                  <i class="bi bi-chevron-right resource-arrow"></i>
-                </a>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </main>
@@ -564,5 +575,24 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="app.js"></script>
+<script>
+ 
+  (function(){
+    function syncHeights(){
+      try{
+        const recent = document.querySelector('.recent-sidebar-card');
+        const moved = document.querySelector('.moved-resources');
+        if (!recent || !moved) return;
+        // match overall card height so bottoms align
+        const height = recent.offsetHeight;
+        moved.style.minHeight = height + 'px';
+      }catch(e){console.error(e)}
+    }
+    document.addEventListener('DOMContentLoaded', function(){ syncHeights(); });
+    window.addEventListener('resize', function(){ syncHeights(); });
+    // also try after a short delay in case fonts/images change layout
+    setTimeout(syncHeights, 800);
+  })();
+</script>
 </body>
 </html>
