@@ -1770,11 +1770,64 @@ function addInteractiveFeatures() {
                     <i class="bi bi-trash"></i>
                 </button>
             `;
-            
+            // Persist change to localStorage (try index first, fallback to field match)
+            try {
+                const taskRows = Array.from(document.querySelectorAll('#taskTable .task-row'));
+                const idx = taskRows.indexOf(row);
+                let tasks = JSON.parse(localStorage.getItem('tasksData')) || [];
+                let updated = false;
+                if (typeof idx === 'number' && tasks[idx]) {
+                    tasks[idx].status = 'completed';
+                    tasks[idx].completedAt = new Date().toISOString();
+                    updated = true;
+                } else {
+                    // Fallback: match by name, subject and due date
+                    const subjectText = row.querySelector('.subject-badge') ? row.querySelector('.subject-badge').textContent.trim() : '';
+                    const dueText = row.querySelector('td:nth-child(5) strong') ? row.querySelector('td:nth-child(5) strong').textContent.trim() : '';
+                    for (let i = 0; i < tasks.length; i++) {
+                        try {
+                            const t = tasks[i];
+                            const tDue = t.due ? (new Date(t.due)).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'}) : String(t.due || '');
+                            if (t.name === taskName && (t.subject === subjectText || tDue === dueText)) {
+                                tasks[i].status = 'completed';
+                                tasks[i].completedAt = new Date().toISOString();
+                                updated = true;
+                                break;
+                            }
+                        } catch (e) { continue; }
+                    }
+                }
+                if (updated) {
+                    localStorage.setItem('tasksData', JSON.stringify(tasks));
+                } else {
+                    // If nothing updated, try syncing table to storage by rebuilding tasks list
+                    const rebuilt = [];
+                    document.querySelectorAll('#taskTable .task-row').forEach(r => {
+                        const name = r.querySelector('.task-title')?.textContent || '';
+                        const description = r.querySelector('.task-title')?.nextElementSibling?.textContent || '';
+                        const subject = r.querySelector('.subject-badge')?.textContent || '';
+                        const priority = r.querySelector('.priority-badge')?.textContent.trim().toLowerCase() || '';
+                        const status = r.getAttribute('data-status') || 'pending';
+                        const due = r.querySelector('td:nth-child(5) strong')?.textContent || '';
+                        rebuilt.push({ name, description, subject, priority, status, due });
+                    });
+                    localStorage.setItem('tasksData', JSON.stringify(rebuilt));
+                }
+            } catch (err) {
+                console.error('Failed to persist task completion', err);
+            }
+
+            // Update UI, stats, notifications and recent activity
             updateStatistics();
             console.log('Task marked as completed!');
-            if (typeof addNotification === 'function') addNotification('task', 'Task completed', taskName);
-            if (typeof addActivity === 'function') addActivity(`Completed task "${taskName}"`, 'complete');
+            try {
+                if (typeof addNotification === 'function') addNotification('task', 'Task completed', taskName);
+            } catch (e) { console.error('Notification failed', e); }
+            try {
+                if (typeof addActivity === 'function') addActivity(`Completed task "${taskName}"`, 'complete');
+            } catch (e) { console.error('Adding activity failed', e); }
+            try { if (typeof updateNotificationUI === 'function') updateNotificationUI(); } catch(e){}
+            try { if (typeof renderRecentActivity === 'function') renderRecentActivity(); } catch(e){}
         }
     }
     
