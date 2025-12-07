@@ -1060,6 +1060,76 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
     
+    // ============================
+// PROFILE EDIT HANDLER
+// ============================
+if (document.body.dataset.page === 'profile') {
+    const editProfileForm = document.getElementById('editProfileForm');
+    if (editProfileForm) {
+        editProfileForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            // Collect values
+            const name = document.getElementById("editName").value;
+            const email = document.getElementById("editEmail").value;
+            const phone = document.getElementById("editPhone").value;
+            const dob = document.getElementById("editDOB").value;
+            const gender = document.getElementById("editGender").value;
+
+            // Update display
+            document.getElementById("displayName").textContent = name;
+            document.getElementById("studentName").textContent = name;
+            document.getElementById("studentEmail").innerHTML = `<a href="mailto:${email}">${email}</a>`;
+            document.getElementById("studentNumber").innerHTML = `<a href="tel:${phone}">${phone}</a>`;
+            document.getElementById("studentDOB").textContent = dob;
+
+            // Close modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById("editProfileModal"));
+            modal.hide();
+
+            // Save to localStorage (optional)
+            const profileData = { name, email, phone, dob, gender };
+            localStorage.setItem("profileData", JSON.stringify(profileData));
+        });
+
+        // Load saved profile data on page load
+        const saved = JSON.parse(localStorage.getItem("profileData"));
+        if (saved) {
+            document.getElementById("displayName").textContent = saved.name;
+            document.getElementById("studentName").textContent = saved.name;
+            document.getElementById("studentEmail").innerHTML = `<a href="mailto:${saved.email}">${saved.email}</a>`;
+            document.getElementById("studentNumber").innerHTML = `<a href="tel:${saved.phone}">${saved.phone}</a>`;
+            document.getElementById("studentDOB").textContent = saved.dob;
+        }
+    }
+}
+
+// ============================
+// PRINT ID CARD HANDLER
+// ============================
+const printBtn = document.getElementById("printIdBtn");
+if (printBtn) {
+  printBtn.addEventListener("click", function () {
+    const imgUrl = "pic/idcard.jpg";  
+    const win = window.open("");
+    win.document.write(`
+      <html>
+        <head><title>Print ID Card</title></head>
+        <body style="margin:0; text-align:center;">
+          <img src="${imgUrl}" style="max-width:100%; height:auto;" />
+          <script>
+            window.onload = function() {
+              window.print();
+            }
+          </script>
+        </body>
+      </html>
+    `);
+    win.document.close();
+  });
+}
+
+
     // Function to filter tasks
     function filterTasks(filterType) {
         const taskRows = document.querySelectorAll('#taskTable .task-row');
