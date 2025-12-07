@@ -606,7 +606,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             ];
 
-        // Try to load persisted subjects first (so edits/deletes survive reload)
+        // Load subjects from localStorage or use default
         try {
             const stored = JSON.parse(localStorage.getItem('subjectsData'));
             if (Array.isArray(stored) && stored.length > 0) {
